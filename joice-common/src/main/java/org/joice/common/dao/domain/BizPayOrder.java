@@ -1,30 +1,36 @@
 package org.joice.common.dao.domain;
 
 import java.util.Date;
+
+import org.joice.common.base.BaseDomain;
 import org.joice.common.util.Money;
 
-public class BizPayOrder {
-    private Long id;
+public class BizPayOrder extends BaseDomain {
 
-    private String buyerUserId;
+    /**  */
+    private static final long serialVersionUID = -7182490332977441628L;
 
-    private String merchantId;
+    private Long              id;
 
-    private String tradeNo;
+    private String            buyerUserId;
 
-    private Money tradeAmount;
+    private String            merchantId;
 
-    private String tradeStatus;
+    private String            tradeNo;
 
-    private String scene;
+    private Money             tradeAmount;
 
-    private String goodsDetail;
+    private String            tradeStatus;
 
-    private String notifyUrl;
+    private String            scene;
 
-    private Date gmtUpdate;
+    private String            goodsDetail;
 
-    private Date gmtCreate;
+    private String            notifyUrl;
+
+    private Date              gmtUpdate;
+
+    private Date              gmtCreate;
 
     public Long getId() {
         return id;

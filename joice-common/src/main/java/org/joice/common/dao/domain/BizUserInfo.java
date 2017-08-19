@@ -2,20 +2,26 @@ package org.joice.common.dao.domain;
 
 import java.util.Date;
 
-public class BizUserInfo {
-    private Integer id;
+import org.joice.common.base.BaseDomain;
 
-    private String userId;
+public class BizUserInfo extends BaseDomain {
 
-    private String loginId;
+    /**  */
+    private static final long serialVersionUID = 9084686434907082886L;
 
-    private String loginPassword;
+    private Integer           id;
 
-    private String phone;
+    private String            userId;
 
-    private Date gmtUpdate;
+    private String            loginId;
 
-    private Date gmtCreate;
+    private String            loginPassword;
+
+    private String            phone;
+
+    private Date              gmtUpdate;
+
+    private Date              gmtCreate;
 
     public Integer getId() {
         return id;
