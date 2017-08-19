@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<substitutionProperty name="pro.name" value="joice-service" />
+	<substitutionProperty name="log.base" value="/home/logs/joice" />
+	<substitutionProperty name="max.size" value="200MB" />
+	<jmxConfigurator />
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%date [%thread] %-5level %logger{80} [%line]- %msg%n
+			</pattern>
+		</layout>
+	</appender>
+
+	<appender name="file.log"
+		class="ch.qos.logback.core.rolling.RollingFileAppender"><!-- All Log Info -->
+		<File>${log.base}/${pro.name}.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.base}/${pro.name}_%d{yyyy-MM-dd}.%i.log.gz
+			</FileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>${max.size}</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%date [%thread] %-5level %logger{80} [%line]- %msg%n
+			</pattern>
+		</layout>
+	</appender>
+
+	<appender name="file.error"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${log.base}/${pro.name}_error.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.base}/${pro.name}_error_%d{yyyy-MM-dd}.%i.log.gz
+			</FileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>${max.size}</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%date [%thread] %-5level %logger{80} [%line]- %msg%n
+			</pattern>
+		</layout>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+	</appender>
+	<!-- 异步输出 -->
+	<appender name="file.async" class="ch.qos.logback.classic.AsyncAppender">
+		<!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+		<discardingThreshold>0</discardingThreshold>
+		<!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+		<queueSize>256</queueSize>
+		<!-- 添加附加的appender,最多只能添加一个 -->
+		<appender-ref ref="file.log" />
+	</appender>
+
+	<root level="INFO">
+		<appender-ref ref="stdout" />
+		<appender-ref ref="file.async" />
+		<appender-ref ref="file.error" />
+	</root>
+</configuration>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE generatorConfiguration  
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"  
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">  
+<generatorConfiguration> 
+    <context id="default"  targetRuntime="MyBatis3" defaultModelType="flat">
+        <commentGenerator>  
+            <property name="suppressDate" value="true"/>  
+            <!-- 是否去除自动生成的注释 -->
+            <property name="suppressAllComments" value="true"/>  
+        </commentGenerator>  
+        <!-- 数据库连接信息 -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://127.0.0.1:3306/joice" userId="root" password="huhui"/>  
+        <javaTypeResolver>  
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>  
+        <!-- 生成领域对象的包名和位置 -->
+        <javaModelGenerator targetPackage="org.joice.common.dao.domain" targetProject="src/main/java">  
+            <property name="enableSubPackages" value="true"/>  
+            <property name="trimStrings" value="true"/>  
+        </javaModelGenerator>  
+        <!-- 生成mapping文件的包名和位置 -->
+        <sqlMapGenerator targetPackage="mapping" targetProject="src/main/resources">  
+            <property name="enableSubPackages" value="true"/>  
+        </sqlMapGenerator>  
+        <!-- 生成DAO的包名和位置 -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="org.joice.common.dao" targetProject="src/main/java">  
+            <property name="enableSubPackages" value="true"/>  
+        </javaClientGenerator>  
+		
+		<!-- 生成表 -->
+		<table tableName="biz_pay_order" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+			<columnOverride column="trade_amount" javaType="org.joice.common.util.Money"></columnOverride>
+		</table>
+		
+		<table tableName="biz_user_info" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"/>
+		
+    </context>  
+</generatorConfiguration>
