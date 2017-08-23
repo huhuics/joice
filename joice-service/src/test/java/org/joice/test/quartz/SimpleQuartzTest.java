@@ -4,6 +4,7 @@
  */
 package org.joice.test.quartz;
 
+import org.joice.common.util.LogUtil;
 import org.joice.test.BaseTest;
 import org.junit.Test;
 import org.quartz.JobBuilder;
@@ -30,13 +31,15 @@ public class SimpleQuartzTest extends BaseTest {
         scheduler.start();
 
         //设置任务
-        JobDetail job = JobBuilder.newJob(SayHello.class).withIdentity("Simple Quartz", "Test Quartz").build();
+        JobDetail job = JobBuilder.newJob(SayHello.class).withIdentity("Simple Quartz", "Test Quartz").usingJobData("123", "simple quartz").build();
 
         //设置触发器
         Trigger trigger = TriggerBuilder.newTrigger().withIdentity("Simple Trigger", "Test Trigger").startNow()
-            .withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(3).withRepeatCount(4)).build();
+            .withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(3).withRepeatCount(4)).usingJobData("123", "456").build();
 
         scheduler.scheduleJob(job, trigger);
+
+        LogUtil.info(logger, "JobKey = {0}", job.getKey().getName());
 
         Thread.sleep(15 * 1000);
 
