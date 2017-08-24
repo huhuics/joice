@@ -15,6 +15,7 @@ import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.listeners.JobListenerSupport;
 
 /**
  * 简单的Quartz测试
@@ -39,12 +40,26 @@ public class SimpleQuartzTest extends BaseTest {
 
         scheduler.scheduleJob(job, trigger);
 
+        scheduler.getListenerManager().addJobListener(new JobListenerSupport() {
+
+            @Override
+            public String getName() {
+                return null;
+            }
+
+        });
+
         LogUtil.info(logger, "JobKey = {0}", job.getKey().getName());
 
         Thread.sleep(15 * 1000);
 
         scheduler.shutdown();
 
+    }
+
+    @Test
+    public void testQuartzWithSpring() throws InterruptedException {
+        Thread.sleep(15 * 1000);
     }
 
 }

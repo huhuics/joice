@@ -223,7 +223,7 @@
 					<artifactId>tomcat7-maven-plugin</artifactId>
 					<version>2.1</version>
 					<configuration>
-						<path>/mpay-check</path>
+						<path>/joice</path>
 						<port>8088</port>
 					</configuration>
 				</plugin>
