@@ -6,45 +6,12 @@
                         http://www.springframework.org/schema/context
                         http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 
-	<!-- 第1步：配置Job -->
-	<bean id="complexJobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
-		<property name="jobClass" value="org.joice.service.quartz.job.ComplexJob" />
-		<property name="durability" value="true" />
-	</bean>
-	
-	<!-- 第2步：配置trigger有两种方式 -->
-	<!-- 方式一： Simple Trigger -->
-	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
-		<property name="jobDetail" ref="complexJobDetail" />
-		<property name="startDelay" value="1000" />
-		<property name="repeatInterval" value="2000" />
-		<property name="repeatCount" value="3" />
-	</bean>
-	
-	<!-- 方式二：Cron Trigger -->
-	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-		<property name="jobDetail" ref="complexJobDetail" />
-		<property name="cronExpression" value="0/5 * * ? * *" />
-	</bean>
-	
-	<!-- 第3步：配置Scheduler -->
 	<bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<description>定时任务调度器工厂</description>
 		<property name="schedulerName" value="joice-scheduler" />
 		<property name="applicationContextSchedulerContextKey" value="applicationContext" />
 		<property name="configLocation" value="classpath:config/quartz.properties" />
 		<property name="dataSource" ref="dataSource" />
-		<property name="jobDetails">
-			<list>
-				<ref bean="complexJobDetail" />
-			</list>
-		</property>
-		<property name="triggers">
-			<list>
-				<ref bean="simpleTrigger" />
-				<ref bean="cronTrigger" />
-			</list>
-		</property>
-	</bean>                        
+	</bean>
 
 </beans>
