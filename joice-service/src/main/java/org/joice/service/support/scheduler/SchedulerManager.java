@@ -10,14 +10,22 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joice.common.util.LogUtil;
+import org.joice.service.support.scheduler.TaskSchedule.JobType;
+import org.joice.service.support.scheduler.TaskSchedule.TaskType;
+import org.joice.service.support.scheduler.job.BaseJob;
+import org.joice.service.support.scheduler.job.StatefulJob;
+import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
+import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.JobListener;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.Trigger.TriggerState;
+import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
@@ -111,6 +119,49 @@ public class SchedulerManager implements InitializingBean {
         String jobName = taskSchedule.getTaskName();
         if (StringUtils.isEmpty(jobName)) {
             jobName = String.valueOf(System.currentTimeMillis());
+        }
+        String cronExpression = taskSchedule.getTaskCron();
+        String targetObject = taskSchedule.getTargetObject();
+        String targetMethod = taskSchedule.getTargetMethod();
+        String jobDescription = taskSchedule.getTaskDesc();
+        String jobType = taskSchedule.getJobType();
+        String taskType = taskSchedule.getTaskType();
+
+        JobDataMap jobDataMap = new JobDataMap();
+        if (StringUtils.equals(TaskType.dubbo, taskType)) {
+            jobDataMap.put("targetSystem", taskSchedule.getTargetSystem());
+        }
+        jobDataMap.put("targetObject", targetObject);
+        jobDataMap.put("targetMethod", targetMethod);
+        jobDataMap.put("taskType", taskType);
+        jobDataMap.put("contactName", taskSchedule.getContactName());
+        jobDataMap.put("contactEmail", taskSchedule.getContactEmail());
+
+        JobBuilder jobBuilder = null;
+        if (StringUtils.equals(JobType.job, jobType)) {
+            jobBuilder = JobBuilder.newJob(BaseJob.class);
+        } else if (StringUtils.equals(JobType.statefulJob, jobType)) {
+            jobBuilder = JobBuilder.newJob(StatefulJob.class);
+        }
+        if (jobBuilder != null) {
+            JobDetail jobDetail = jobBuilder.withIdentity(jobName, jobGroup).withDescription(jobDescription).storeDurably(true).usingJobData(jobDataMap)
+                .build();
+
+            Trigger trigger = TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).withIdentity(jobName, jobGroup)
+                .withDescription(jobDescription).forJob(jobDetail).usingJobData(jobDataMap).build();
+
+            try {
+                JobDetail detail = scheduler.getJobDetail(new JobKey(jobName, jobGroup));
+                if (detail == null) {
+                    scheduler.scheduleJob(jobDetail, trigger);
+                } else {
+                    scheduler.addJob(jobDetail, true);
+                    scheduler.rescheduleJob(new TriggerKey(jobName, jobGroup), trigger);
+                }
+                return true;
+            } catch (SchedulerException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         return false;
