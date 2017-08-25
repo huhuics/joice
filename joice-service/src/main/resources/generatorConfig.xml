@@ -29,11 +29,13 @@
         </javaClientGenerator>  
 		
 		<!-- 生成表 -->
-		<table tableName="biz_pay_order" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+		<!-- <table tableName="biz_pay_order" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 			<columnOverride column="trade_amount" javaType="org.joice.common.util.Money"></columnOverride>
+		</table> -->
+		
+		<table tableName="task_fire_log" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
 		</table>
 		
-		<table tableName="biz_user_info" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"/>
 		
     </context>  
 </generatorConfiguration>
