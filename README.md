@@ -15,4 +15,7 @@
 7.多系统交互：Dubbo、ActiveMQ多系统交互。    
 8.日志：log4j2打印日志，同时基于时间和文件大小分割日志文件。    
 
+# 启动    
+[joice-service] --> Run as --> Maven build... --> tomcat7:run
+
 ### 代码在逐步完善中

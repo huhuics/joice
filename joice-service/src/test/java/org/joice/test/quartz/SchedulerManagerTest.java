@@ -4,6 +4,8 @@
  */
 package org.joice.test.quartz;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.joice.service.support.scheduler.SchedulerManager;
@@ -40,8 +42,14 @@ public class SchedulerManagerTest extends BaseTest {
 
     @Test
     public void testAddJob() {
-        boolean ret = schedulerManager.updateTask(taskSchedule);
+        boolean ret = schedulerManager.addTask(taskSchedule);
         Assert.assertTrue(ret);
+    }
+
+    @Test
+    public void testGetAllJobDetail() {
+        List<TaskSchedule> jobDetails = schedulerManager.getAllJobDetail();
+        Assert.assertTrue(jobDetails.size() > 0);
     }
 
 }

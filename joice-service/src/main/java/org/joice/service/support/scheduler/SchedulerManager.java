@@ -94,7 +94,7 @@ public class SchedulerManager implements InitializingBean {
                     String jobClass = jobDetail.getJobClass().getSimpleName();
                     if (StringUtils.equals(jobClass, "StatefulJob")) {
                         job.setJobType(TaskSchedule.JobType.statefulJob);
-                    } else if (StringUtils.equals(jobClass, "DefaultJob")) {
+                    } else if (StringUtils.equals(jobClass, "BaseJob")) {
                         job.setJobType(TaskSchedule.JobType.job);
                     }
 
@@ -109,9 +109,9 @@ public class SchedulerManager implements InitializingBean {
     }
 
     /**
-     * 修改任务
+     * 增加任务
      */
-    public boolean updateTask(TaskSchedule taskSchedule) {
+    public boolean addTask(TaskSchedule taskSchedule) {
         String jobGroup = taskSchedule.getTaskGroup();
         if (StringUtils.isEmpty(jobGroup)) {
             jobGroup = "ds_job";

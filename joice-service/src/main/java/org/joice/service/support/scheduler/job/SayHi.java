@@ -7,7 +7,7 @@ package org.joice.service.support.scheduler.job;
 import org.springframework.stereotype.Component;
 
 /**
- * 
+ * 只是一个测试类
  * @author HuHui
  * @version $Id: SayHi.java, v 0.1 2017年8月25日 下午8:41:34 HuHui Exp $
  */
