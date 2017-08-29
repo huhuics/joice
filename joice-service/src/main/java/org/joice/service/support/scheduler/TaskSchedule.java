@@ -63,7 +63,7 @@ public class TaskSchedule extends BaseDomain {
     public interface JobType {
 
         /** 普通任务 */
-        String job         = "job";
+        String defaultJob  = "defaultJob";
 
         /** 阻塞任务 */
         String statefulJob = "statefulJob";

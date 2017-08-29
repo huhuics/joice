@@ -61,11 +61,7 @@ public class JobListener implements org.quartz.JobListener {
         log.setServerHost(NativeUtil.getHostName());
         log.setServerDuid(NativeUtil.getDUID());
 
-        if (log.getId() == null) {
-            taskFireLogMapper.insert(log);
-        } else {
-            taskFireLogMapper.updateByPrimaryKeyWithBLOBs(log);
-        }
+        taskFireLogMapper.insertAndGetId(log);
 
         jobDataMap.put(JOB_LOG, log);
     }
@@ -99,7 +95,7 @@ public class JobListener implements org.quartz.JobListener {
                 }
             }
         }
-        taskFireLogMapper.updateByPrimaryKeyWithBLOBs(log);
+        taskFireLogMapper.updateByPrimaryKey(log);
     }
 
 }

@@ -15,6 +15,6 @@ import org.quartz.PersistJobDataAfterExecution;
  */
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-public class StatefulJob extends BaseJob implements Job {
+public class StatefulJob extends DefaultJob implements Job {
 
 }

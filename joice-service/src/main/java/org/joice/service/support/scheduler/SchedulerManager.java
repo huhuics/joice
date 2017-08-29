@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.joice.common.util.LogUtil;
 import org.joice.service.support.scheduler.TaskSchedule.JobType;
 import org.joice.service.support.scheduler.TaskSchedule.TaskType;
-import org.joice.service.support.scheduler.job.BaseJob;
+import org.joice.service.support.scheduler.job.DefaultJob;
 import org.joice.service.support.scheduler.job.StatefulJob;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
@@ -94,8 +94,8 @@ public class SchedulerManager implements InitializingBean {
                     String jobClass = jobDetail.getJobClass().getSimpleName();
                     if (StringUtils.equals(jobClass, "StatefulJob")) {
                         job.setJobType(TaskSchedule.JobType.statefulJob);
-                    } else if (StringUtils.equals(jobClass, "BaseJob")) {
-                        job.setJobType(TaskSchedule.JobType.job);
+                    } else if (StringUtils.equals(jobClass, "defaultJob")) {
+                        job.setJobType(TaskSchedule.JobType.defaultJob);
                     }
 
                     result.add(job);
@@ -109,7 +109,8 @@ public class SchedulerManager implements InitializingBean {
     }
 
     /**
-     * 增加任务
+     * 增加/修改任务
+     * 通过jobName和jobGroup唯一标识一个任务,如果任务存在,则修改;否则添加
      */
     public boolean addTask(TaskSchedule taskSchedule) {
         String jobGroup = taskSchedule.getTaskGroup();
@@ -138,8 +139,8 @@ public class SchedulerManager implements InitializingBean {
         jobDataMap.put("contactEmail", taskSchedule.getContactEmail());
 
         JobBuilder jobBuilder = null;
-        if (StringUtils.equals(JobType.job, jobType)) {
-            jobBuilder = JobBuilder.newJob(BaseJob.class);
+        if (StringUtils.equals(JobType.defaultJob, jobType)) {
+            jobBuilder = JobBuilder.newJob(DefaultJob.class);
         } else if (StringUtils.equals(JobType.statefulJob, jobType)) {
             jobBuilder = JobBuilder.newJob(StatefulJob.class);
         }

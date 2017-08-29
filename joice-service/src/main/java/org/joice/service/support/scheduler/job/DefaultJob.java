@@ -4,7 +4,6 @@
  */
 package org.joice.service.support.scheduler.job;
 
-import org.joice.common.util.LogUtil;
 import org.joice.service.support.scheduler.TaskSchedule.TaskType;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -17,16 +16,14 @@ import org.springframework.context.ApplicationContext;
 /**
  * 默认调度任务对象(非阻塞)
  * @author HuHui
- * @version $Id: BaseJob.java, v 0.1 2017年8月25日 上午9:19:21 HuHui Exp $
+ * @version $Id: DefaultJob.java, v 0.1 2017年8月25日 上午9:19:21 HuHui Exp $
  */
-public class BaseJob implements Job {
+public class DefaultJob implements Job {
 
-    private static final Logger logger = LoggerFactory.getLogger(BaseJob.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultJob.class);
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-
-        long start = System.currentTimeMillis();
 
         JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
         String taskType = jobDataMap.getString("taskType");
@@ -41,8 +38,6 @@ public class BaseJob implements Job {
             } else if (TaskType.dubbo.equals(taskType)) {
                 // TODO dubbo任务
             }
-            double time = (System.currentTimeMillis() - start) / 1000.0;
-            LogUtil.info(logger, "定时任务[{0}.{1}]用时:{2}s", targetObject, targetMethod, time);
         } catch (Exception e) {
             throw new RuntimeException("执行任务出错", e);
         }

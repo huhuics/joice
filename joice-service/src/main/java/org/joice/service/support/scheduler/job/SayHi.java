@@ -18,4 +18,12 @@ public class SayHi {
         System.out.println(" Hi from SayHi! ");
     }
 
+    /**
+     * 休眠一段时间
+     * @throws InterruptedException 
+     */
+    public void sayAndSleep() throws InterruptedException {
+        System.out.println(" Hi from sayAndSleep! ");
+        Thread.sleep(5000);
+    }
 }

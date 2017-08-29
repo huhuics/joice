@@ -156,4 +156,17 @@
       server_duid = #{serverDuid,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  
+  <!-- 插入记录并获取主键 -->
+  <insert id="insertAndGetId"  parameterType="org.joice.common.dao.domain.TaskFireLog" useGeneratedKeys="true" keyProperty="id" >
+    insert into task_fire_log (group_name, task_name, 
+      start_time, end_time, status_, 
+      server_host, server_duid, fire_info
+      )
+    values (#{groupName,jdbcType=VARCHAR}, #{taskName,jdbcType=VARCHAR}, 
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{status,jdbcType=VARCHAR}, 
+      #{serverHost,jdbcType=VARCHAR}, #{serverDuid,jdbcType=VARCHAR}, #{fireInfo,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  
 </mapper>

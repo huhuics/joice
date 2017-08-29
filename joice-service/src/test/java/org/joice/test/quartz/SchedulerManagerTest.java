@@ -34,7 +34,7 @@ public class SchedulerManagerTest extends BaseTest {
         taskSchedule.setStatus("1");
         taskSchedule.setTaskCron("0/3 * * * * ?");
         taskSchedule.setTaskDesc("这是一个简单的测试任务");
-        taskSchedule.setJobType(JobType.job);
+        taskSchedule.setJobType(JobType.defaultJob);
         taskSchedule.setTaskType(TaskType.local);
         taskSchedule.setTargetObject("sayHi");
         taskSchedule.setTargetMethod("say");
@@ -47,9 +47,80 @@ public class SchedulerManagerTest extends BaseTest {
     }
 
     @Test
+    public void testAddExistJob() {
+        TaskSchedule taskSchedule = new TaskSchedule();
+        taskSchedule.setTaskName("joice_default_job_001");
+        taskSchedule.setTaskGroup("joice_default_job");
+        taskSchedule.setStatus("1");
+        taskSchedule.setTaskCron("0/3 * * * * ?");
+        taskSchedule.setTaskDesc("每3秒钟执行一次的测试任务");
+        taskSchedule.setJobType(JobType.defaultJob);
+        taskSchedule.setTaskType(TaskType.local);
+        taskSchedule.setTargetObject("sayHi");
+        taskSchedule.setTargetMethod("sayAndSleep");
+
+        boolean ret = schedulerManager.addTask(taskSchedule);
+        Assert.assertTrue(ret);
+    }
+
+    @Test
+    public void testAddStatefulJob() {
+        TaskSchedule taskSchedule = new TaskSchedule();
+        taskSchedule.setTaskName("joice_stateful_job_001");
+        taskSchedule.setTaskGroup("joice_stateful_job");
+        taskSchedule.setStatus("1");
+        taskSchedule.setTaskCron("0/3 * * * * ?");
+        taskSchedule.setTaskDesc("每3秒钟执行一次的测试任务");
+        taskSchedule.setJobType(JobType.statefulJob);
+        taskSchedule.setTaskType(TaskType.local);
+        taskSchedule.setTargetObject("sayHi");
+        taskSchedule.setTargetMethod("sayAndSleep");
+
+        boolean ret = schedulerManager.addTask(taskSchedule);
+        Assert.assertTrue(ret);
+    }
+
+    @Test
     public void testGetAllJobDetail() {
         List<TaskSchedule> jobDetails = schedulerManager.getAllJobDetail();
         Assert.assertTrue(jobDetails.size() > 0);
+    }
+
+    @Test
+    public void testDelJob() {
+        TaskSchedule scheduleJob = new TaskSchedule();
+        scheduleJob.setTaskName("joice_job_003");
+        scheduleJob.setTaskGroup("joice_job");
+
+        schedulerManager.delJob(scheduleJob);
+    }
+
+    /**
+     * 测试修改任务执行计划并运行
+     */
+    @Test
+    public void testModifyAndRun() {
+        TaskSchedule taskSchedule = new TaskSchedule();
+        taskSchedule.setTaskName("joice_job_003");
+        taskSchedule.setTaskGroup("joice_job");
+
+        //1.暂停任务
+        schedulerManager.stopJob(taskSchedule);
+
+        //2.修改配置
+        taskSchedule.setStatus("1");
+        taskSchedule.setTaskCron("0/15 * * * * ?");
+        taskSchedule.setTaskDesc("每15秒执行一次的测试任务");
+        taskSchedule.setJobType(JobType.defaultJob);
+        taskSchedule.setTaskType(TaskType.local);
+        taskSchedule.setTargetObject("sayHi");
+        taskSchedule.setTargetMethod("say");
+
+        schedulerManager.addTask(taskSchedule);
+
+        //3.恢复启动
+        schedulerManager.resumeJob(taskSchedule);
+
     }
 
 }
