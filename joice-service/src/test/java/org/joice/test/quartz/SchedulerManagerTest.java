@@ -11,7 +11,6 @@ import javax.annotation.Resource;
 import org.joice.service.support.scheduler.SchedulerManager;
 import org.joice.service.support.scheduler.TaskSchedule;
 import org.joice.service.support.scheduler.TaskSchedule.JobType;
-import org.joice.service.support.scheduler.TaskSchedule.TaskType;
 import org.joice.test.BaseTest;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,7 +34,6 @@ public class SchedulerManagerTest extends BaseTest {
         taskSchedule.setTaskCron("0/3 * * * * ?");
         taskSchedule.setTaskDesc("这是一个简单的测试任务");
         taskSchedule.setJobType(JobType.defaultJob);
-        taskSchedule.setTaskType(TaskType.local);
         taskSchedule.setTargetObject("sayHi");
         taskSchedule.setTargetMethod("say");
     }
@@ -47,15 +45,14 @@ public class SchedulerManagerTest extends BaseTest {
     }
 
     @Test
-    public void testAddExistJob() {
+    public void testAddDefaultJob() {
         TaskSchedule taskSchedule = new TaskSchedule();
         taskSchedule.setTaskName("joice_default_job_001");
         taskSchedule.setTaskGroup("joice_default_job");
         taskSchedule.setStatus("1");
-        taskSchedule.setTaskCron("0/3 27 * * * ?");
-        taskSchedule.setTaskDesc("每3秒钟执行一次的测试任务");
+        taskSchedule.setTaskCron("0/5 * * * * ?");
+        taskSchedule.setTaskDesc("每5秒钟执行一次的测试任务，非阻塞");
         taskSchedule.setJobType(JobType.defaultJob);
-        taskSchedule.setTaskType(TaskType.local);
         taskSchedule.setTargetObject("sayHi");
         taskSchedule.setTargetMethod("sayAndSleep");
 
@@ -69,10 +66,9 @@ public class SchedulerManagerTest extends BaseTest {
         taskSchedule.setTaskName("joice_stateful_job_001");
         taskSchedule.setTaskGroup("joice_stateful_job");
         taskSchedule.setStatus("1");
-        taskSchedule.setTaskCron("0/3 20 * * * ?");
-        taskSchedule.setTaskDesc("每3秒钟执行一次的测试任务");
+        taskSchedule.setTaskCron("0/3 * * * * ?");
+        taskSchedule.setTaskDesc("每3秒钟执行一次的测试任务，阻塞任务");
         taskSchedule.setJobType(JobType.statefulJob);
-        taskSchedule.setTaskType(TaskType.local);
         taskSchedule.setTargetObject("sayHi");
         taskSchedule.setTargetMethod("sayAndSleep");
 
@@ -112,7 +108,6 @@ public class SchedulerManagerTest extends BaseTest {
         taskSchedule.setTaskCron("0/15 * * * * ?");
         taskSchedule.setTaskDesc("每15秒执行一次的测试任务");
         taskSchedule.setJobType(JobType.defaultJob);
-        taskSchedule.setTaskType(TaskType.local);
         taskSchedule.setTargetObject("sayHi");
         taskSchedule.setTargetMethod("say");
 

@@ -42,12 +42,6 @@ public class TaskSchedule extends BaseDomain {
     /** 任务类型(是否阻塞) */
     private String            jobType;
 
-    /** 本地任务/dubbo任务 */
-    private String            taskType;
-
-    /** 运行系统(dubbo任务必填) */
-    private String            targetSystem;
-
     /** 任务对象 */
     private String            targetObject;
 
@@ -67,15 +61,6 @@ public class TaskSchedule extends BaseDomain {
 
         /** 阻塞任务 */
         String statefulJob = "statefulJob";
-    }
-
-    public interface TaskType {
-
-        /** 本地任务 */
-        String local = "LOCAL";
-
-        /** dubbo任务 */
-        String dubbo = "DUBBO";
     }
 
     public TaskSchedule() {
@@ -149,22 +134,6 @@ public class TaskSchedule extends BaseDomain {
 
     public void setJobType(String jobType) {
         this.jobType = jobType;
-    }
-
-    public String getTaskType() {
-        return taskType;
-    }
-
-    public void setTaskType(String taskType) {
-        this.taskType = taskType;
-    }
-
-    public String getTargetSystem() {
-        return targetSystem;
-    }
-
-    public void setTargetSystem(String targetSystem) {
-        this.targetSystem = targetSystem;
     }
 
     public String getTargetObject() {

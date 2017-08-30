@@ -11,7 +11,6 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.joice.common.util.LogUtil;
 import org.joice.service.support.scheduler.TaskSchedule.JobType;
-import org.joice.service.support.scheduler.TaskSchedule.TaskType;
 import org.joice.service.support.scheduler.job.DefaultJob;
 import org.joice.service.support.scheduler.job.StatefulJob;
 import org.quartz.CronScheduleBuilder;
@@ -83,8 +82,6 @@ public class SchedulerManager implements InitializingBean {
 
                     JobDataMap jobDataMap = trigger.getJobDataMap();
 
-                    job.setTaskType(jobDataMap.getString("taskType"));
-                    job.setTargetSystem(jobDataMap.getString("targetSystem"));
                     job.setTargetObject(jobDataMap.getString("targetObject"));
                     job.setTargetMethod(jobDataMap.getString("targetMethod"));
                     job.setContactName(jobDataMap.getString("contactName"));
@@ -94,7 +91,7 @@ public class SchedulerManager implements InitializingBean {
                     String jobClass = jobDetail.getJobClass().getSimpleName();
                     if (StringUtils.equals(jobClass, "StatefulJob")) {
                         job.setJobType(TaskSchedule.JobType.statefulJob);
-                    } else if (StringUtils.equals(jobClass, "defaultJob")) {
+                    } else if (StringUtils.equals(jobClass, "DefaultJob")) {
                         job.setJobType(TaskSchedule.JobType.defaultJob);
                     }
 
@@ -126,15 +123,10 @@ public class SchedulerManager implements InitializingBean {
         String targetMethod = taskSchedule.getTargetMethod();
         String jobDescription = taskSchedule.getTaskDesc();
         String jobType = taskSchedule.getJobType();
-        String taskType = taskSchedule.getTaskType();
 
         JobDataMap jobDataMap = new JobDataMap();
-        if (StringUtils.equals(TaskType.dubbo, taskType)) {
-            jobDataMap.put("targetSystem", taskSchedule.getTargetSystem());
-        }
         jobDataMap.put("targetObject", targetObject);
         jobDataMap.put("targetMethod", targetMethod);
-        jobDataMap.put("taskType", taskType);
         jobDataMap.put("contactName", taskSchedule.getContactName());
         jobDataMap.put("contactEmail", taskSchedule.getContactEmail());
 
