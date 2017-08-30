@@ -52,7 +52,7 @@ public class SchedulerManagerTest extends BaseTest {
         taskSchedule.setTaskName("joice_default_job_001");
         taskSchedule.setTaskGroup("joice_default_job");
         taskSchedule.setStatus("1");
-        taskSchedule.setTaskCron("0/3 * * * * ?");
+        taskSchedule.setTaskCron("0/3 27 * * * ?");
         taskSchedule.setTaskDesc("每3秒钟执行一次的测试任务");
         taskSchedule.setJobType(JobType.defaultJob);
         taskSchedule.setTaskType(TaskType.local);
@@ -69,7 +69,7 @@ public class SchedulerManagerTest extends BaseTest {
         taskSchedule.setTaskName("joice_stateful_job_001");
         taskSchedule.setTaskGroup("joice_stateful_job");
         taskSchedule.setStatus("1");
-        taskSchedule.setTaskCron("0/3 * * * * ?");
+        taskSchedule.setTaskCron("0/3 20 * * * ?");
         taskSchedule.setTaskDesc("每3秒钟执行一次的测试任务");
         taskSchedule.setJobType(JobType.statefulJob);
         taskSchedule.setTaskType(TaskType.local);
@@ -89,8 +89,8 @@ public class SchedulerManagerTest extends BaseTest {
     @Test
     public void testDelJob() {
         TaskSchedule scheduleJob = new TaskSchedule();
-        scheduleJob.setTaskName("joice_job_003");
-        scheduleJob.setTaskGroup("joice_job");
+        scheduleJob.setTaskName("joice_stateful_job_001");
+        scheduleJob.setTaskGroup("joice_stateful_job");
 
         schedulerManager.delJob(scheduleJob);
     }

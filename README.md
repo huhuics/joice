@@ -7,13 +7,13 @@
 
 # 主要功能
 1.数据库：Druid数据库连接池，监控数据库访问性能，统计SQL执行性能，数据库密码加密。    
-2.持久层：MyBatis持久化，使用MyBatis-Plus优化，减少SQL开发量；AOP切换数据库实现读写分离。    
+2.持久层：MyBatis持久化；AOP切换数据库实现读写分离。    
 3.MVC：基于Spring MVC注解，REST风格Controller。Exception统一管理。    
-4.调度：Spring + Quartz，可以查询、修改周期、暂停、删除、新增、立即执行、查询执行记录等。    
+4.调度：Spring + Quartz，可以查询、修改周期、暂停、删除、新增、立即执行、查询执行记录等。[Quartz知识点总结](https://github.com/huhuics/Accumulate/blob/master/%E6%9E%B6%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95/Quartz%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.md)    
 5.基于Session的国际化提示信息，责任链模式的本地语言拦截器；Shiro登录、URL权限管理、会话管理、强制结束会话。    
 6.缓存和Session：注解redis缓存数据，Spring-session和redis实现分布式session同步，重启服务会话不丢失。    
 7.多系统交互：Dubbo、ActiveMQ多系统交互。    
-8.日志：log4j2打印日志，同时基于时间和文件大小分割日志文件。    
+8.日志：logback打印日志，同时基于时间和文件大小分割日志文件。    
 
 # 启动    
 [joice-service] --> Run as --> Maven build... --> tomcat7:run
