@@ -9,8 +9,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joice.common.dao.domain.TaskSchedule;
+import org.joice.common.dao.domain.TaskSchedule.JobType;
 import org.joice.common.util.LogUtil;
-import org.joice.service.support.scheduler.TaskSchedule.JobType;
 import org.joice.service.support.scheduler.job.DefaultJob;
 import org.joice.service.support.scheduler.job.StatefulJob;
 import org.quartz.CronScheduleBuilder;
@@ -33,7 +34,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 /**
  * 默认的定时任务管理器
- * 实现InitializingBean接口为了初始化bean
+ * 实现InitializingBean接口为了初始化bean时调用afterPropertiesSet方法
  * @author HuHui
  * @version $Id: SchedulerManager.java, v 0.1 2017年8月24日 下午7:27:41 HuHui Exp $
  */

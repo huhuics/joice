@@ -14,10 +14,10 @@
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
-		<!-- joic common -->
+		<!-- joic -->
 		<dependency>
 			<groupId>com.joice</groupId>
-			<artifactId>joice-common</artifactId>
+			<artifactId>joice-facade</artifactId>
 			<version>0.0.1</version>
 		</dependency>
 

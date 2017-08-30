@@ -2,7 +2,7 @@
  * 深圳金融电子结算中心
  * Copyright (c) 1995-2017 All Rights Reserved.
  */
-package org.joice.service.support.scheduler;
+package org.joice.common.dao.domain;
 
 import java.util.Date;
 

@@ -8,9 +8,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.joice.common.dao.domain.TaskSchedule;
+import org.joice.common.dao.domain.TaskSchedule.JobType;
 import org.joice.service.support.scheduler.SchedulerManager;
-import org.joice.service.support.scheduler.TaskSchedule;
-import org.joice.service.support.scheduler.TaskSchedule.JobType;
 import org.joice.test.BaseTest;
 import org.junit.Assert;
 import org.junit.Before;
