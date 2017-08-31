@@ -2,7 +2,7 @@
  * 深圳金融电子结算中心
  * Copyright (c) 1995-2017 All Rights Reserved.
  */
-package org.joice.test.dao;
+package org.joice.service.test.dao;
 
 import javax.annotation.Resource;
 
@@ -11,7 +11,7 @@ import org.joice.common.dao.domain.BizPayOrder;
 import org.joice.common.enums.TradeSceneEnum;
 import org.joice.common.enums.TradeStatusEnmu;
 import org.joice.common.util.Money;
-import org.joice.test.BaseTest;
+import org.joice.service.test.BaseTest;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -14,7 +14,6 @@
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-				<value>classpath:config/jdbc.properties</value>
 				<value>classpath:config/dubbo.properties</value>
 			</list>
 		</property>
@@ -25,18 +24,6 @@
 		<context:exclude-filter type="annotation"
 			expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
-
-	<!-- 配置线程池 -->
-<!-- 	<bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-		核心线程数
-		<property name="corePoolSize" value="10" />
-		最大线程数
-		<property name="maxPoolSize" value="10" />
-		线程池对拒绝任务(无线程可用)的处理策略
-		<property name="rejectedExecutionHandler">
-			<bean class="java.util.concurrent.ThreadPoolExecutor$CallerRunsPolicy" />
-		</property>
-	</bean>  -->
 
 	<!-- 引入Spring其它配置文件 -->
 	<import resource="spring/Spring-*.xml" />

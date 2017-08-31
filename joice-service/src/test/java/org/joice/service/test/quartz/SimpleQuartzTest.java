@@ -2,10 +2,10 @@
  * 深圳金融电子结算中心
  * Copyright (c) 1995-2017 All Rights Reserved.
  */
-package org.joice.test.quartz;
+package org.joice.service.test.quartz;
 
 import org.joice.common.util.LogUtil;
-import org.joice.test.BaseTest;
+import org.joice.service.test.BaseTest;
 import org.junit.Test;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;

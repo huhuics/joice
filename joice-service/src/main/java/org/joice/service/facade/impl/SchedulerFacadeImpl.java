@@ -15,12 +15,14 @@ import org.joice.facade.api.SchedulerFacade;
 import org.joice.service.support.scheduler.SchedulerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 /**
  * 调度门面接口实现类
  * @author HuHui
  * @version $Id: SchedulerFacadeImpl.java, v 0.1 2017年8月30日 下午8:40:33 HuHui Exp $
  */
+@Service("schedulerFacade")
 public class SchedulerFacadeImpl implements SchedulerFacade {
 
     private static final Logger logger = LoggerFactory.getLogger(SchedulerFacadeImpl.class);

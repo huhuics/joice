@@ -2,7 +2,7 @@
  * 深圳金融电子结算中心
  * Copyright (c) 1995-2017 All Rights Reserved.
  */
-package org.joice.test.quartz;
+package org.joice.service.test.quartz;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import javax.annotation.Resource;
 import org.joice.common.dao.domain.TaskSchedule;
 import org.joice.common.dao.domain.TaskSchedule.JobType;
 import org.joice.service.support.scheduler.SchedulerManager;
-import org.joice.test.BaseTest;
+import org.joice.service.test.BaseTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,8 +50,8 @@ public class SchedulerManagerTest extends BaseTest {
         taskSchedule.setTaskName("joice_default_job_001");
         taskSchedule.setTaskGroup("joice_default_job");
         taskSchedule.setStatus("1");
-        taskSchedule.setTaskCron("0/5 * * * * ?");
-        taskSchedule.setTaskDesc("每5秒钟执行一次的测试任务，非阻塞");
+        taskSchedule.setTaskCron("* 5 * * * ?");
+        taskSchedule.setTaskDesc("每5分钟执行一次的测试任务，非阻塞");
         taskSchedule.setJobType(JobType.defaultJob);
         taskSchedule.setTargetObject("sayHi");
         taskSchedule.setTargetMethod("sayAndSleep");

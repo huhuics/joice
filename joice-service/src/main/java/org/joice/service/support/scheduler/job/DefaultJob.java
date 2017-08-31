@@ -28,7 +28,6 @@ public class DefaultJob implements Job {
             ApplicationContext applicationContext = (ApplicationContext) context.getScheduler().getContext().get("applicationContext");
             Object refer = applicationContext.getBean(targetObject);
             refer.getClass().getDeclaredMethod(targetMethod).invoke(refer);
-            int i = 1 / 0;
         } catch (Exception e) {
             throw new RuntimeException("执行任务出错", e);
         }
