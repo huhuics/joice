@@ -33,27 +33,32 @@ public class SchedulerFacadeImpl implements SchedulerFacade {
 
     @Override
     public List<TaskSchedule> getAllTaskDetail() {
-        return null;
+        return schedulerManager.getAllJobDetail();
     }
 
     @Override
     public void execTask(TaskSchedule taskSchedule) {
+        schedulerManager.runJob(taskSchedule);
     }
 
     @Override
     public void resumeTask(TaskSchedule taskSchedule) {
+        schedulerManager.resumeJob(taskSchedule);
     }
 
     @Override
     public void stopTask(TaskSchedule taskSchedule) {
+        schedulerManager.stopJob(taskSchedule);
     }
 
     @Override
     public void delTask(TaskSchedule taskSchedule) {
+        schedulerManager.delJob(taskSchedule);
     }
 
     @Override
     public void addOrUpdateTask(TaskSchedule taskSchedule) {
+        schedulerManager.addTask(taskSchedule);
     }
 
     @Override
