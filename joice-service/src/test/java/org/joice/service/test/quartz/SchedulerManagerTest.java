@@ -50,7 +50,7 @@ public class SchedulerManagerTest extends BaseTest {
         taskSchedule.setTaskName("joice_default_job_001");
         taskSchedule.setTaskGroup("joice_default_job");
         taskSchedule.setStatus("1");
-        taskSchedule.setTaskCron("* 5 * * * ?");
+        taskSchedule.setTaskCron("* 0/5 * * * ?");
         taskSchedule.setTaskDesc("每5分钟执行一次的测试任务，非阻塞");
         taskSchedule.setJobType(JobType.defaultJob);
         taskSchedule.setTargetObject("sayHi");
