@@ -21,4 +21,8 @@ public class BaseTest {
 
     protected static final Logger logger = LoggerFactory.getLogger(BaseTest.class);
 
+    protected String geneRandomId() {
+        return (System.currentTimeMillis() + (long) (Math.random() * 10000000L)) + "";
+    }
+
 }

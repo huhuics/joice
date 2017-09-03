@@ -10,6 +10,7 @@ import org.joice.common.dao.BizPayOrderMapper;
 import org.joice.common.dao.domain.BizPayOrder;
 import org.joice.common.enums.TradeSceneEnum;
 import org.joice.common.enums.TradeStatusEnmu;
+import org.joice.common.util.LogUtil;
 import org.joice.common.util.Money;
 import org.joice.service.test.BaseTest;
 import org.junit.Assert;
@@ -29,9 +30,9 @@ public class PayOrderDaoTest extends BaseTest {
     public void testInsert() {
         BizPayOrder record = new BizPayOrder();
 
-        record.setBuyerUserId("1");
-        record.setMerchantId("001");
-        record.setTradeNo("0001");
+        record.setBuyerUserId("6");
+        record.setMerchantId("006");
+        record.setTradeNo("tradeNo" + geneRandomId());
         record.setTradeAmount(new Money(12.3));
         record.setTradeStatus(TradeStatusEnmu.trade_success.getCode());
         record.setScene(TradeSceneEnum.bar_code.getCode());
@@ -40,6 +41,15 @@ public class PayOrderDaoTest extends BaseTest {
         int ret = bizPayOrderMapper.insert(record);
 
         Assert.assertTrue(ret == 1);
+    }
+
+    @Test
+    public void testQueryById() {
+        Long id = 3L;
+        BizPayOrder order = bizPayOrderMapper.selectByPrimaryKey(id);
+        LogUtil.info(logger, "order : {0}", order);
+        Assert.assertNotNull(order);
+        Assert.assertTrue(order.getId() == id);
     }
 
 }

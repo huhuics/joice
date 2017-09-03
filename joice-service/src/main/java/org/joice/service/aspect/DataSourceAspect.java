@@ -12,7 +12,6 @@ import org.joice.common.util.LogUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.core.NamedThreadLocal;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,45 +25,34 @@ import org.springframework.stereotype.Component;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class DataSourceAspect {
 
-    private static final Logger       logger      = LoggerFactory.getLogger(DataSourceAspect.class);
+    private static final Logger logger = LoggerFactory.getLogger(DataSourceAspect.class);
 
-    private final ThreadLocal<String> threadLocal = new NamedThreadLocal<String>("DataSourceAspect");
-
-    @Around("execution(* org.joice.service.facade.impl.*.*(..))")
-    public void around(ProceedingJoinPoint point) {
+    @Around("execution(* org.joice.common.dao.*.*(..))")
+    public Object around(ProceedingJoinPoint point) throws Throwable {
         try {
             String className = point.getTarget().getClass().getName();
             String method = point.getSignature().getName();
 
             LogUtil.info(logger, "{0}.{1}({2})", className, method, StringUtils.join(point.getArgs(), ","));
 
-            String dataSourceType = threadLocal.get();
-            if (StringUtils.isNotBlank(threadLocal.get())) {
-                LogUtil.info(logger, "dataSourceType : {0}", dataSourceType);
-                HandleDataSource.putDataSource(dataSourceType);
-                threadLocal.set(dataSourceType);
-                return;
-            }
-
             try {
-                for (String key : ChooseDataSource.METHODTYPE.keySet()) {
+                L: for (String key : ChooseDataSource.METHODTYPE.keySet()) {
                     for (String type : ChooseDataSource.METHODTYPE.get(key)) {
                         if (method.startsWith(type)) {
-                            LogUtil.info(logger, "key : {0}", key);
+                            LogUtil.info(logger, "current operation is [{0}]", key);
                             HandleDataSource.putDataSource(key);
-                            threadLocal.set(key);
-                            break;
+                            break L;
                         }
                     }
                 }
             } catch (Exception e) {
                 LogUtil.error(e, logger, "");
             }
+            return point.proceed();
         } finally {
             HandleDataSource.clear();
             LogUtil.info(logger, "数据库切换结束");
         }
-
     }
 
 }
