@@ -50,11 +50,11 @@ public class SchedulerManagerTest extends BaseTest {
         taskSchedule.setTaskName("joice_default_job_001");
         taskSchedule.setTaskGroup("joice_default_job");
         taskSchedule.setStatus("1");
-        taskSchedule.setTaskCron("* 0/5 * * * ?");
+        taskSchedule.setTaskCron("0 0/5 * * * ?");
         taskSchedule.setTaskDesc("每5分钟执行一次的测试任务，非阻塞");
         taskSchedule.setJobType(JobType.defaultJob);
         taskSchedule.setTargetObject("sayHi");
-        taskSchedule.setTargetMethod("sayAndSleep");
+        taskSchedule.setTargetMethod("say");
 
         boolean ret = schedulerManager.addTask(taskSchedule);
         Assert.assertTrue(ret);
@@ -85,8 +85,8 @@ public class SchedulerManagerTest extends BaseTest {
     @Test
     public void testDelJob() {
         TaskSchedule scheduleJob = new TaskSchedule();
-        scheduleJob.setTaskName("joice_stateful_job_001");
-        scheduleJob.setTaskGroup("joice_stateful_job");
+        scheduleJob.setTaskName("joice_default_job_001");
+        scheduleJob.setTaskGroup("joice_default_job");
 
         schedulerManager.delJob(scheduleJob);
     }
