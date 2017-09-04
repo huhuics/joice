@@ -7,7 +7,7 @@
 
 # 主要功能    
 1. 数据库：Druid数据库连接池，监控数据库访问性能，统计SQL执行性能，数据库密码加密。    
-    + 数据库密码加密和解密用到了`com.alibaba.druid.filter.config.ConfigTools`，再定一个类扩展`com.alibaba.druid.pool.DruidDataSource`，即可，具体代码实现在`org.joice.service.datasource.DecryptDruidDataSource`    
+    + 数据库密码加密和解密用到了`com.alibaba.druid.filter.config.ConfigTools`，再定一个类扩展`com.alibaba.druid.pool.DruidDataSource`即可，具体代码实现在`org.joice.service.datasource.DecryptDruidDataSource`    
 
 2. 持久层：MyBatis持久化；AOP切换数据库实现读写分离。    
     + 读写分离实际上是动态切换数据库。扩展`org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource`，在每次数据库调用前确定数据源。具体代码实现在`org.joice.service.aspect.ChooseDataSource`    
@@ -16,7 +16,8 @@
 
 4. 调度：Spring + Quartz，可以查询、修改周期、暂停、删除、新增、立即执行、查询执行记录等。    
     + [Quartz知识点总结](https://github.com/huhuics/Accumulate/blob/master/%E6%9E%B6%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95/Quartz%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.md)    
-    
+    + 具体实现在`org.joice.service.support.scheduler.SchedulerManager`
+     
 5. 基于Session的国际化提示信息，责任链模式的本地语言拦截器。    
 
 6. Shiro登录、URL权限管理、会话管理、强制结束会话。    
