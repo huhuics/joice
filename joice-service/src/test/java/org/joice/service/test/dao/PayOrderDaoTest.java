@@ -16,6 +16,8 @@ import org.joice.service.test.BaseTest;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.alibaba.druid.filter.config.ConfigTools;
+
 /**
  * 测试BizPayOrderMapper
  * @author HuHui
@@ -50,6 +52,13 @@ public class PayOrderDaoTest extends BaseTest {
         LogUtil.info(logger, "order : {0}", order);
         Assert.assertNotNull(order);
         Assert.assertTrue(order.getId() == id);
+    }
+
+    @Test
+    public void testEncrypt() throws Exception {
+        String password = "huhui";
+        String[] arr = ConfigTools.genKeyPair(512);
+        LogUtil.info(logger, "password:{0}", ConfigTools.encrypt(password));
     }
 
 }

@@ -13,7 +13,7 @@
 		<property name="mergeSql" value="true" />
 	</bean>
 
-	<bean id="readDataSource" class="com.alibaba.druid.pool.DruidDataSource"
+	<bean id="readDataSource" class="org.joice.service.datasource.DecryptDruidDataSource"
 		destroy-method="close" init-method="init" lazy-init="true">
 		<description>只读数据库连接</description>
 		<property name="driverClassName" value="${db.driver}" />
@@ -47,7 +47,7 @@
 		<property name="timeBetweenEvictionRunsMillis" value="${db.timeBetweenEvictionRunsMillis}" />
 	</bean>
 
-	<bean id="writeDataSource" class="com.alibaba.druid.pool.DruidDataSource"
+	<bean id="writeDataSource" class="org.joice.service.datasource.DecryptDruidDataSource"
 		destroy-method="close" init-method="init" lazy-init="true">
 		<description>只写数据库连接</description>
 		<property name="driverClassName" value="${db.driver}" />
