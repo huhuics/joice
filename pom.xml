@@ -221,6 +221,12 @@
 				<artifactId>aspectjrt</artifactId>
 				<version>${aspectj.version}</version>
 			</dependency>
+			<!-- rocket mq -->
+			<dependency>
+				<groupId>org.apache.rocketmq</groupId>
+				<artifactId>rocketmq-client</artifactId>
+				<version>4.0.0-incubating</version>
+			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>

@@ -23,7 +23,11 @@
 			<artifactId>joice-common</artifactId>
 			<version>0.0.1</version>
 		</dependency>
-
+		<!-- rocket mq -->
+		<dependency>
+			<groupId>org.apache.rocketmq</groupId>
+			<artifactId>rocketmq-client</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

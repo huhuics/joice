@@ -21,6 +21,7 @@
 		
 	<!-- 调用其它工程暴露的服务 -->
 	<dubbo:reference interface="org.joice.facade.api.SchedulerFacade" id="schedulerFacade" check="false"/>
+	<dubbo:reference interface="org.joice.facade.api.MqProducerFacade" id="mqProducerFacade" check="false"/>
 	
 	<!-- 加上url的写法-->
 	<!-- <dubbo:reference interface="cn.fesc.facade.api.output.AlipayTradeResponseFacade" id="alipayTradeResponseFacade" 

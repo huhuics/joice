@@ -26,5 +26,6 @@
 	
 	<!-- 要对外暴露的接口 -->
     <dubbo:service interface="org.joice.facade.api.SchedulerFacade" ref="schedulerFacade" />
+    <dubbo:service interface="org.joice.facade.api.MqProducerFacade" ref="mqProducerFacade" />
     
 </beans>
