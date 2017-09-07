@@ -18,4 +18,9 @@ public interface MqProducerFacade {
      */
     String send(Message message) throws Exception;
 
+    /**
+     * 关闭producer
+     */
+    void shutdown();
+
 }

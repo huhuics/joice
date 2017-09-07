@@ -35,7 +35,7 @@ public class RocketMqPushConsumer {
 
     private String                topic;
 
-    private String                tag;
+    private String                tag    = "*";
 
     public void init() throws MQClientException {
         LogUtil.info(logger, "defaultMQPushConsumer init! nameServerAddr={0},topic={1},tag={2}", nameServerAddr, topic, tag);
@@ -49,8 +49,9 @@ public class RocketMqPushConsumer {
         consumer.registerMessageListener(new MessageListenerConcurrently() {
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
-                Message msg = msgs.get(0);
-                LogUtil.info(logger, "message:{0}, content:{1}", msg.getKeys(), new String(msg.getBody()));
+                for (Message msg : msgs) {
+                    LogUtil.info(logger, "message:{0}, content:{1}", msg.getKeys(), new String(msg.getBody()));
+                }
                 return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             }
         });

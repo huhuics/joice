@@ -29,4 +29,9 @@ public class MqproducerFacadeImpl implements MqProducerFacade {
         return result.toString();
     }
 
+    @Override
+    public void shutdown() {
+        rocketMqProducer.getDefaultMQProducer().shutdown();
+    }
+
 }

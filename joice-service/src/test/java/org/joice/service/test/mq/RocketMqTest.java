@@ -33,5 +33,7 @@ public class RocketMqTest extends BaseTest {
         SendResult sendResult = rocketMqProducer.getDefaultMQProducer().send(msg);
 
         LogUtil.info(logger, "id:{0}, sendStatus{1}", sendResult.getMsgId(), sendResult.getSendStatus());
+
+        Thread.sleep(4000);
     }
 }

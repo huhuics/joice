@@ -43,7 +43,7 @@ public class MqController {
         String tag = "orderMsg";
         String content = "这个一条测试订单消息";
 
-        Message msg = new Message(topic, tag, String.valueOf(System.currentTimeMillis()), content.getBytes());
+        Message msg = new Message(topic, tag, content.getBytes());
 
         return msg;
     }
