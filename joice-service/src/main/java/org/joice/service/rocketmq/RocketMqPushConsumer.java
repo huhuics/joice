@@ -42,6 +42,7 @@ public class RocketMqPushConsumer {
 
         consumer = new DefaultMQPushConsumer(consumerGroup);
         consumer.subscribe(topic, tag);
+        consumer.setNamesrvAddr(nameServerAddr);
 
         //程序第一次启动从消息队列头取数据
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
@@ -49,6 +50,7 @@ public class RocketMqPushConsumer {
         consumer.registerMessageListener(new MessageListenerConcurrently() {
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
+                LogUtil.info(logger, "consume message");
                 for (Message msg : msgs) {
                     LogUtil.info(logger, "message:{0}, content:{1}", msg.getKeys(), new String(msg.getBody()));
                 }
@@ -56,9 +58,26 @@ public class RocketMqPushConsumer {
             }
         });
 
-        consumer.start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(5000);
+                    consumer.start();
+                    LogUtil.info(logger, "defaultMQPushConsumer start successful!");
+                } catch (MQClientException e) {
+                    LogUtil.error(e, logger, "defaultMQPushConsumer start failed");
+                } catch (InterruptedException e) {
+                    LogUtil.error(e, logger, "");
+                }
+            }
+        }).start();
 
-        LogUtil.info(logger, "defaultMQPushConsumer start successful!");
+    }
+
+    public void destory() {
+        consumer.shutdown();
+        LogUtil.info(logger, "defaultMQPushConsumer destoried success");
     }
 
     public void setConsumerGroup(String consumerGroup) {

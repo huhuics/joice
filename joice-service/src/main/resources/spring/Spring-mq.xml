@@ -13,9 +13,10 @@
 		<property name="producerGroup" value="${producerGroup}" />
 		<property name="nameServerAddr" value="${nameServerAddr}" />
 	</bean>
-	
+
 	<!-- 消费者 -->
-	<bean id="pushConsumer" class="org.joice.service.rocketmq.RocketMqPushConsumer" init-method="init">
+	<bean id="pushConsumer" class="org.joice.service.rocketmq.RocketMqPushConsumer"
+		init-method="init" destroy-method="destory">
 		<description>RocketMQ push consumer</description>
 		<property name="consumerGroup" value="${consumerGroup}" />
 		<property name="nameServerAddr" value="${nameServerAddr}" />
