@@ -6,12 +6,22 @@
                         http://www.springframework.org/schema/context
                         http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 
-	<!-- 生产者 -->
+	<!-- 普通消息生产者 -->
 	<bean id="rocketMqProducer" class="org.joice.service.rocketmq.RocketMqProducer"
 		init-method="init" destroy-method="destory">
-		<description>RocketMQ producer</description>
+		<description>RocketMQ default producer</description>
 		<property name="producerGroup" value="${producerGroup}" />
 		<property name="nameServerAddr" value="${nameServerAddr}" />
+	</bean>
+
+	<!-- 事务消息生产者 -->
+	<bean id="txMQProducer" class="org.joice.service.rocketmq.RocketMqTxProducer"
+		init-method="init" destroy-method="destory">
+		<description>RocketMQ transaction producer</description>
+		<property name="txProducerGroup" value="${txProducerGroup}" />
+		<property name="checkThreadPoolMinSize" value="${checkThreadPoolMinSize}" />
+		<property name="checkThreadPoolMaxSize" value="${checkThreadPoolMaxSize}" />
+		<property name="checkRequestHoldMax" value="${checkRequestHoldMax}" />
 	</bean>
 
 	<!-- 消费者 -->

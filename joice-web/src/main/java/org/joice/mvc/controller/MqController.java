@@ -30,10 +30,20 @@ public class MqController {
 
     @GetMapping("mq/produce")
     public String produce(ModelMap modelMap) throws Exception {
-        LogUtil.info(logger, "收到发送Message 请求");
+        LogUtil.info(logger, "收到发送message 请求");
         Message msg = createMessage();
         String sendResult = mqProducerFacade.send(msg);
-        LogUtil.info(logger, "sendResult:{0}", sendResult);
+        LogUtil.info(logger, "message sendResult:{0}", sendResult);
+
+        return sendResult;
+    }
+
+    @GetMapping("mq/txProduce")
+    public String txProduce(ModelMap modelMap) throws Exception {
+        LogUtil.info(logger, "收到发送tx message请求");
+        Message msg = createMessage();
+        String sendResult = mqProducerFacade.sendInTx(msg);
+        LogUtil.info(logger, "txMessage sendResult:{0}", sendResult);
 
         return sendResult;
     }
@@ -41,9 +51,10 @@ public class MqController {
     private Message createMessage() {
         String topic = "joice-ms";
         String tag = "orderMsg";
+        String key = String.valueOf(System.currentTimeMillis());
         String content = "这个一条测试订单消息";
 
-        Message msg = new Message(topic, tag, content.getBytes());
+        Message msg = new Message(topic, tag, key, content.getBytes());
 
         return msg;
     }

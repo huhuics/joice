@@ -14,9 +14,11 @@ import org.apache.rocketmq.common.message.Message;
 public interface MqProducerFacade {
 
     /**
-     * 发送Message
+     * 发送普通Message
      */
     String send(Message message) throws Exception;
+
+    String sendInTx(Message message) throws Exception;
 
     /**
      * 关闭producer

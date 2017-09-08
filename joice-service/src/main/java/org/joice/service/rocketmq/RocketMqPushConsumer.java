@@ -12,7 +12,6 @@ import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
-import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.joice.common.util.LogUtil;
 import org.slf4j.Logger;
@@ -51,8 +50,18 @@ public class RocketMqPushConsumer {
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
                 LogUtil.info(logger, "consume message");
-                for (Message msg : msgs) {
-                    LogUtil.info(logger, "message:{0}, content:{1}", msg.getKeys(), new String(msg.getBody()));
+                for (MessageExt msg : msgs) {
+                    try {
+                        //消费消息
+                        LogUtil.info(logger, "message:{0}", msg);
+                    } catch (Exception e) {
+                        LogUtil.error(e, logger, "消费消息出错!");
+                        if (msg.getReconsumeTimes() <= 3) {//重复消费3次
+                            return ConsumeConcurrentlyStatus.RECONSUME_LATER;
+                        } else {
+                            //TODO 消息消费失败
+                        }
+                    }
                 }
                 return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             }
@@ -62,6 +71,7 @@ public class RocketMqPushConsumer {
             @Override
             public void run() {
                 try {
+                    //休眠是为等待Spring加载完
                     Thread.sleep(5000);
                     consumer.start();
                     LogUtil.info(logger, "defaultMQPushConsumer start successful!");
