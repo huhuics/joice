@@ -19,6 +19,7 @@
 		init-method="init" destroy-method="destory">
 		<description>RocketMQ transaction producer</description>
 		<property name="txProducerGroup" value="${txProducerGroup}" />
+		<property name="namesrvAddr" value="${nameServerAddr}" />
 		<property name="checkThreadPoolMinSize" value="${checkThreadPoolMinSize}" />
 		<property name="checkThreadPoolMaxSize" value="${checkThreadPoolMaxSize}" />
 		<property name="checkRequestHoldMax" value="${checkRequestHoldMax}" />

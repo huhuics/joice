@@ -4,6 +4,8 @@
  */
 package org.joice.service.rocketmq;
 
+import javax.annotation.Resource;
+
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.TransactionMQProducer;
 import org.joice.common.util.LogUtil;
@@ -17,19 +19,22 @@ import org.slf4j.LoggerFactory;
  */
 public class RocketMqTxProducer {
 
-    private static final Logger   logger = LoggerFactory.getLogger(RocketMqTxProducer.class);
+    private static final Logger          logger = LoggerFactory.getLogger(RocketMqTxProducer.class);
 
-    private TransactionMQProducer txMQProducer;
+    private TransactionMQProducer        txMQProducer;
 
-    private String                namesrvAddr;
+    private String                       namesrvAddr;
 
-    private String                txProducerGroup;
+    private String                       txProducerGroup;
 
-    private int                   checkThreadPoolMinSize;
+    private int                          checkThreadPoolMinSize;
 
-    private int                   checkThreadPoolMaxSize;
+    private int                          checkThreadPoolMaxSize;
 
-    private int                   checkRequestHoldMax;
+    private int                          checkRequestHoldMax;
+
+    @Resource
+    private TransactionCheckListenerImpl transactionCheckListenerImpl;
 
     public void init() throws MQClientException {
         LogUtil.info(logger, "txMQProducer init!");
@@ -45,6 +50,8 @@ public class RocketMqTxProducer {
 
         //队列数
         txMQProducer.setCheckRequestHoldMax(checkRequestHoldMax);
+
+        txMQProducer.setTransactionCheckListener(transactionCheckListenerImpl);
 
         txMQProducer.start();
 

@@ -18,6 +18,9 @@ public interface MqProducerFacade {
      */
     String send(Message message) throws Exception;
 
+    /**
+     * 发送事务消息
+     */
     String sendInTx(Message message) throws Exception;
 
     /**

@@ -11,6 +11,9 @@ import org.apache.rocketmq.common.message.Message;
 import org.joice.facade.api.MqProducerFacade;
 import org.joice.service.rocketmq.RocketMqProducer;
 import org.joice.service.rocketmq.RocketMqTxProducer;
+import org.joice.service.rocketmq.TransactionExecuterImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,11 +24,15 @@ import org.springframework.stereotype.Service;
 @Service("mqProducerFacade")
 public class MqproducerFacadeImpl implements MqProducerFacade {
 
-    @Resource
-    private RocketMqProducer   rocketMqProducer;
+    private static final Logger     logger                  = LoggerFactory.getLogger(MqproducerFacadeImpl.class);
 
     @Resource
-    private RocketMqTxProducer rocketMqTxProducer;
+    private RocketMqProducer        rocketMqProducer;
+
+    @Resource
+    private RocketMqTxProducer      rocketMqTxProducer;
+
+    private TransactionExecuterImpl transactionExecuterImpl = new TransactionExecuterImpl();
 
     @Override
     public String send(Message message) throws Exception {
@@ -35,8 +42,7 @@ public class MqproducerFacadeImpl implements MqProducerFacade {
 
     @Override
     public String sendInTx(Message message) throws Exception {
-        //TODO
-        SendResult result = rocketMqTxProducer.getTxMQProducer().sendMessageInTransaction(message, null, null);
+        SendResult result = rocketMqTxProducer.getTxMQProducer().sendMessageInTransaction(message, transactionExecuterImpl, null);
         return result.toString();
     }
 
