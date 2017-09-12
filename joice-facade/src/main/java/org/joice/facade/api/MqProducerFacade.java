@@ -24,6 +24,11 @@ public interface MqProducerFacade {
     String sendInTx(Message message) throws Exception;
 
     /**
+     * 发送顺序消息
+     */
+    String sendInOrder(Message message, int orderId) throws Exception;
+
+    /**
      * 关闭producer
      */
     void shutdown();

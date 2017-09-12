@@ -53,7 +53,7 @@ public class RocketMqPushConsumer {
                 for (MessageExt msg : msgs) {
                     try {
                         //消费消息
-                        LogUtil.info(logger, "message:{0}", msg);
+                        LogUtil.info(logger, "message:{0}, content={1}", msg, new String(msg.getBody()));
                     } catch (Exception e) {
                         LogUtil.error(e, logger, "消费消息出错!");
                         if (msg.getReconsumeTimes() <= 3) {//重复消费3次

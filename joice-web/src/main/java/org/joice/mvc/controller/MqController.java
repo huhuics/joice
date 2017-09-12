@@ -30,12 +30,24 @@ public class MqController {
 
     @GetMapping("mq/produce")
     public String produce(ModelMap modelMap) throws Exception {
-        LogUtil.info(logger, "收到发送message 请求");
+        LogUtil.info(logger, "收到发送message请求");
         Message msg = createMessage();
         String sendResult = mqProducerFacade.send(msg);
         LogUtil.info(logger, "message sendResult:{0}", sendResult);
 
         return sendResult;
+    }
+
+    @GetMapping("mq/produceMsgs")
+    public String produceMsgs(ModelMap modelMap) throws Exception {
+        LogUtil.info(logger, "收到批量发送message请求");
+        for (int i = 0; i < 1000; i++) {
+            Message msg = createMessage(i);
+            String sendResult = mqProducerFacade.send(msg);
+            LogUtil.info(logger, "message sendResult:{0}", sendResult);
+        }
+
+        return "批量发送完成";
     }
 
     @GetMapping("mq/txProduce")
@@ -48,11 +60,35 @@ public class MqController {
         return sendResult;
     }
 
+    @GetMapping("mq/orderProduce")
+    public String orderProduce(ModelMap modelMap) throws Exception {
+        LogUtil.info(logger, "收到顺序发送message请求");
+        for (int i = 0; i < 1000; i++) {
+            int orderId = i % 10;
+            Message msg = createMessage(i);
+            String sendResult = mqProducerFacade.sendInOrder(msg, orderId);
+            LogUtil.info(logger, "orderMessage sendResult:{0}", sendResult);
+        }
+
+        return "顺序消息发送完成";
+    }
+
     private Message createMessage() {
         String topic = "joice-ms";
         String tag = "orderMsg";
         String key = String.valueOf(System.currentTimeMillis());
-        String content = "这个一条测试订单消息";
+        String content = "这个一条测试订单消息" + key;
+
+        Message msg = new Message(topic, tag, key, content.getBytes());
+
+        return msg;
+    }
+
+    private Message createMessage(int id) {
+        String topic = "joice-ms";
+        String tag = "orderMsg";
+        String key = String.valueOf(System.currentTimeMillis());
+        String content = "这个一条测试订单消息" + id;
 
         Message msg = new Message(topic, tag, key, content.getBytes());
 

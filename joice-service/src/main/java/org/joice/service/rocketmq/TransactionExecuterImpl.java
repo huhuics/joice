@@ -30,7 +30,7 @@ public class TransactionExecuterImpl implements LocalTransactionExecuter {
     public LocalTransactionState executeLocalTransactionBranch(Message msg, Object arg) {
         int value = transactionIndex.incrementAndGet();
 
-        LogUtil.info(logger, "TransactionExecuterImpl, value:{0}", value);
+        LogUtil.info(logger, "TransactionExecuterImpl, value:{0}, msg={1}, org={2}", value, msg, arg);
 
         if (value == 0) {
             throw new RuntimeException("Could not find DB");

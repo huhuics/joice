@@ -4,10 +4,14 @@
  */
 package org.joice.service.facade.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
+import org.apache.rocketmq.client.producer.MessageQueueSelector;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.common.message.Message;
+import org.apache.rocketmq.common.message.MessageQueue;
 import org.joice.facade.api.MqProducerFacade;
 import org.joice.service.rocketmq.RocketMqProducer;
 import org.joice.service.rocketmq.RocketMqTxProducer;
@@ -24,7 +28,7 @@ import org.springframework.stereotype.Service;
 @Service("mqProducerFacade")
 public class MqproducerFacadeImpl implements MqProducerFacade {
 
-    private static final Logger     logger                  = LoggerFactory.getLogger(MqproducerFacadeImpl.class);
+    private static final Logger     logger = LoggerFactory.getLogger(MqproducerFacadeImpl.class);
 
     @Resource
     private RocketMqProducer        rocketMqProducer;
@@ -32,7 +36,8 @@ public class MqproducerFacadeImpl implements MqProducerFacade {
     @Resource
     private RocketMqTxProducer      rocketMqTxProducer;
 
-    private TransactionExecuterImpl transactionExecuterImpl = new TransactionExecuterImpl();
+    @Resource
+    private TransactionExecuterImpl transactionExecuterImpl;
 
     @Override
     public String send(Message message) throws Exception {
@@ -42,7 +47,20 @@ public class MqproducerFacadeImpl implements MqProducerFacade {
 
     @Override
     public String sendInTx(Message message) throws Exception {
-        SendResult result = rocketMqTxProducer.getTxMQProducer().sendMessageInTransaction(message, transactionExecuterImpl, null);
+        SendResult result = rocketMqTxProducer.getTxMQProducer().sendMessageInTransaction(message, transactionExecuterImpl, "MqproducerFacadeImpl.sendInTx");
+        return result.toString();
+    }
+
+    @Override
+    public String sendInOrder(Message message, int orderId) throws Exception {
+        SendResult result = rocketMqProducer.getDefaultMQProducer().send(message, new MessageQueueSelector() {
+            @Override
+            public MessageQueue select(List<MessageQueue> mqs, Message msg, Object arg) {
+                int id = (int) arg;
+                int index = id % mqs.size();
+                return mqs.get(index);
+            }
+        }, orderId);
         return result.toString();
     }
 
