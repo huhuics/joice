@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
- * 
+ * 当RocketMQ发现prepared消息时，会根据这个Listener实现的策略来决定是否提交消息发送请求
  * @author HuHui
  * @version $Id: TransactionCheckListenerImpl.java, v 0.1 2017年9月11日 下午6:09:45 HuHui Exp $
  */

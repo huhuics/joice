@@ -53,6 +53,9 @@ public class MqproducerFacadeImpl implements MqProducerFacade {
 
     @Override
     public String sendInOrder(Message message, int orderId) throws Exception {
+        //RocketMQ通过MessageQueueSelector中实现的算法来确定消息发送到哪一个队列上
+        //RocketMQ默认提供了两种MessageQueueSelector实现：随机/Hash
+        //此处根据业务实现自己的MessageQueueSelector：订单号相同的消息会被先后发送到通过一个队列中
         SendResult result = rocketMqProducer.getDefaultMQProducer().send(message, new MessageQueueSelector() {
             @Override
             public MessageQueue select(List<MessageQueue> mqs, Message msg, Object arg) {
