@@ -4,9 +4,11 @@
  */
 package org.joice.cache.map;
 
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joice.cache.CacheManager;
 import org.joice.cache.clone.Cloner;
 import org.joice.cache.config.CacheConfig;
@@ -90,7 +92,48 @@ public class MapCacheManager implements CacheManager {
     }
 
     @Override
-    public void setCache(CacheKeyTO cacheKey, CacheWrapper<Object> result, Method method, Object[] args) throws CacheCenterConnectionException {
+    @SuppressWarnings("unchecked")
+    public void setCache(CacheKeyTO cacheKeyTO, CacheWrapper<Object> result, Method method, Object[] args) throws CacheCenterConnectionException {
+        String cacheKey = null;
+        if (cacheKeyTO == null || StringUtils.isEmpty(cacheKey = cacheKeyTO.getCacheKey())) {
+            return;
+        }
+        CacheWrapper<Object> value = null;
+        if (copyValueOnSet) {
+            try {
+                value = (CacheWrapper<Object>) cloner.deepClone(result, null);
+            } catch (Exception e) {
+                logger.error("", e);
+            }
+        } else {
+            value = result;
+        }
+        //构造软引用
+        SoftReference<CacheWrapper<Object>> reference = new SoftReference<CacheWrapper<Object>>(value);
+        String hfield = cacheKeyTO.getHfield();
+        if (StringUtils.isBlank(hfield)) {
+            cache.put(cacheKey, reference);
+        } else {
+            Object tmpObj = cache.get(cacheKey);
+            ConcurrentHashMap<String, SoftReference<CacheWrapper<Object>>> hash;
+            if (tmpObj == null) {
+                hash = new ConcurrentHashMap<String, SoftReference<CacheWrapper<Object>>>();
+                ConcurrentHashMap<String, SoftReference<CacheWrapper<Object>>> _hash = null;//_hash的作用是防止并发情况下,hash为null
+                _hash = (ConcurrentHashMap<String, SoftReference<CacheWrapper<Object>>>) cache.putIfAbsent(cacheKey, hash);
+                if (_hash != null) {
+                    hash = _hash;
+                }
+            } else {
+                if (tmpObj instanceof ConcurrentHashMap) {
+                    hash = (ConcurrentHashMap<String, SoftReference<CacheWrapper<Object>>>) tmpObj;
+                } else {
+                    logger.error(method.getClass().getName() + "." + method.getName() + "中key为" + cacheKey + "的缓存,已经被占用,请删除缓存再试 ");
+                    return;
+                }
+            }
+            hash.put(hfield, reference);
+        }
+        changeListener.cacheChange();
     }
 
     @Override
