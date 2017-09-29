@@ -72,7 +72,7 @@ public class MapCacheManager implements CacheManager {
     public MapCacheManager(CacheConfig config, Cloner cloner) {
         this.cloner = cloner;
         this.config = config;
-        cacheTask = new CacheTask();//TODO
+        cacheTask = new CacheTask(this);
         changeListener = cacheTask;
     }
 
@@ -94,10 +94,11 @@ public class MapCacheManager implements CacheManager {
     @Override
     @SuppressWarnings("unchecked")
     public void setCache(CacheKeyTO cacheKeyTO, CacheWrapper<Object> result, Method method, Object[] args) throws CacheCenterConnectionException {
-        String cacheKey = null;
+        String cacheKey;
         if (cacheKeyTO == null || StringUtils.isEmpty(cacheKey = cacheKeyTO.getCacheKey())) {
             return;
         }
+
         CacheWrapper<Object> value = null;
         if (copyValueOnSet) {
             try {
@@ -108,6 +109,7 @@ public class MapCacheManager implements CacheManager {
         } else {
             value = result;
         }
+
         //构造软引用
         SoftReference<CacheWrapper<Object>> reference = new SoftReference<CacheWrapper<Object>>(value);
         String hfield = cacheKeyTO.getHfield();
@@ -137,12 +139,86 @@ public class MapCacheManager implements CacheManager {
     }
 
     @Override
-    public CacheWrapper<Object> get(CacheKeyTO key, Method method, Object[] args) throws CacheCenterConnectionException {
-        return null;
+    @SuppressWarnings("unchecked")
+    public CacheWrapper<Object> get(CacheKeyTO cacheKeyTO, Method method, Object[] args) throws CacheCenterConnectionException {
+        String cacheKey;
+        if (cacheKeyTO == null || StringUtils.isEmpty((cacheKey = cacheKeyTO.getCacheKey()))) {
+            return null;
+        }
+
+        Object obj = cache.get(cacheKey);
+        if (obj == null) {
+            return null;
+        }
+
+        String hfield = cacheKeyTO.getHfield();
+        CacheWrapper<Object> value = null;
+        if (StringUtils.isEmpty(hfield)) {
+            if (obj instanceof SoftReference) {
+                SoftReference<CacheWrapper<Object>> reference = (SoftReference<CacheWrapper<Object>>) obj;
+                if (reference != null) {
+                    value = reference.get();
+                }
+            }
+        } else {
+            ConcurrentHashMap<String, Object> hash = (ConcurrentHashMap<String, Object>) obj;
+            Object tmp = hash.get(hfield);
+            if (tmp instanceof SoftReference) {
+                SoftReference<CacheWrapper<Object>> reference = (SoftReference<CacheWrapper<Object>>) tmp;
+                if (reference != null) {
+                    value = reference.get();
+                }
+            }
+        }
+
+        if (value != null) {
+            if (value.isExpired()) {
+                return null;
+            }
+            if (copyValueOnGet) {
+                try {
+                    CacheWrapper<Object> res = (CacheWrapper<Object>) value.clone();
+                    res.setCacheObject(cloner.deepClone(value.getCacheObject(), method.getReturnType()));
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+            }
+        }
+        return value;
     }
 
     @Override
-    public void delete(CacheKeyTO key) throws CacheCenterConnectionException {
+    @SuppressWarnings("unchecked")
+    public void delete(CacheKeyTO cacheKeyTO) throws CacheCenterConnectionException {
+        String cacheKey;
+        if (cacheKeyTO == null || StringUtils.isEmpty((cacheKey = cacheKeyTO.getCacheKey()))) {
+            return;
+        }
+
+        String hfield = cacheKeyTO.getHfield();
+        if (StringUtils.isEmpty(hfield)) {
+            Object tmp = cache.remove(cacheKey);
+            if (tmp == null) {//删除失败
+                return;
+            }
+
+            if (tmp instanceof CacheWrapper) {
+                changeListener.cacheChange();
+            } else if (tmp instanceof ConcurrentHashMap) {
+                ConcurrentHashMap<String, CacheWrapper<Object>> hash = (ConcurrentHashMap<String, CacheWrapper<Object>>) tmp;
+                if (hash.size() > 0) {
+                    changeListener.cacheChange(hash.size());
+                }
+            }
+        } else {
+            ConcurrentHashMap<String, CacheWrapper<Object>> hash = (ConcurrentHashMap<String, CacheWrapper<Object>>) cache.get(cacheKey);
+            if (hash != null) {
+                Object tmp = hash.remove(hfield);
+                if (tmp != null) {
+                    changeListener.cacheChange();
+                }
+            }
+        }
     }
 
     public int getUnPersistMaxSize() {
