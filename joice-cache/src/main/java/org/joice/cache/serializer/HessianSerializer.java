@@ -8,8 +8,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.joice.cache.util.BeanUtil;
 
 import com.caucho.hessian.io.AbstractHessianInput;
 import com.caucho.hessian.io.AbstractHessianOutput;
@@ -71,7 +74,23 @@ public class HessianSerializer implements Serializer<Object> {
 
     @Override
     public Object deepClone(Object obj, Type type) throws Exception {
-        return null;
+        if (null == obj) {
+            return null;
+        }
+        Class<?> clazz = obj.getClass();
+        //常见不会被修改的数据类型
+        if (BeanUtil.isPrimitive(obj) || clazz.isEnum() || obj instanceof Class || clazz.isAnnotation() || clazz.isSynthetic()) {
+            return obj;
+        }
+        if (obj instanceof Date) {
+            return ((Date) obj).clone();
+        } else if (obj instanceof Calendar) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(((Calendar) obj).getTime().getTime());
+            return cal;
+        }
+        return deserialize(serialize(obj), null);
+
     }
 
     @Override
