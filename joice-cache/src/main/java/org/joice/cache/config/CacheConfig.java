@@ -55,7 +55,7 @@ public class CacheConfig {
 
     private Map<String, String>   functions;
 
-    /** 加载数据重试册数,默认值为1 */
+    /** 加载数据重试次数,默认值为1 */
     private int                   loadDataTryCnt                 = 1;
 
     public String getNamespace() {

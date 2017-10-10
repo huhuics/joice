@@ -95,7 +95,18 @@ public class HessianSerializer implements Serializer<Object> {
 
     @Override
     public Object[] deepCloneMethodArgs(Method method, Object[] args) throws Exception {
-        return null;
+        if (args == null || args.length == 0) {
+            return args;
+        }
+        Type[] genericParameterTypes = method.getGenericParameterTypes();
+        if (args.length != genericParameterTypes.length) {
+            throw new RuntimeException("length of " + method.getClass().getName() + "." + method.getName() + " must " + genericParameterTypes.length);
+        }
+        Object[] res = new Object[args.length];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = deepClone(args[i], null);
+        }
+        return res;
     }
 
 }
