@@ -93,7 +93,7 @@ public class MapCacheManager implements CacheManager {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setCache(CacheKeyTO cacheKeyTO, CacheWrapper<Object> result, Method method, Object[] args) throws CacheCenterConnectionException {
+    public void setCache(CacheKeyTO cacheKeyTO, CacheWrapper<Object> wrapper, Method method, Object[] args) throws CacheCenterConnectionException {
         String cacheKey;
         if (cacheKeyTO == null || StringUtils.isEmpty(cacheKey = cacheKeyTO.getCacheKey())) {
             return;
@@ -102,12 +102,12 @@ public class MapCacheManager implements CacheManager {
         CacheWrapper<Object> value = null;
         if (copyValueOnSet) {
             try {
-                value = (CacheWrapper<Object>) cloner.deepClone(result, null);
+                value = (CacheWrapper<Object>) cloner.deepClone(wrapper, null);
             } catch (Exception e) {
                 logger.error("", e);
             }
         } else {
-            value = result;
+            value = wrapper;
         }
 
         //构造软引用

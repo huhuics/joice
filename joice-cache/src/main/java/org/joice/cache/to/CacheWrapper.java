@@ -25,7 +25,7 @@ public class CacheWrapper<T> implements Serializable, Cloneable {
     /** 最后加载时间 */
     private long              lastLoadTime;
 
-    /** 缓存时长 */
+    /** 缓存时长(单位:秒) */
     private int               expire;
 
     public CacheWrapper() {

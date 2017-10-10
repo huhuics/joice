@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joice.cache.serializer.HessianSerializer;
 import org.joice.cache.serializer.Serializer;
 import org.joice.cache.to.CacheWrapper;
 import org.joice.cache.util.OsUtil;
@@ -167,7 +168,11 @@ public class CacheTask implements Runnable, CacheChangeListener {
     }
 
     private Serializer<Object> getPersistSerializer() {
-        return null;//TODO
+        if (persistSerializer == null) {
+            //只有HessianSerializer才支持SoftReference序列化
+            persistSerializer = new HessianSerializer();
+        }
+        return persistSerializer;
     }
 
     @Override

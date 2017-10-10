@@ -20,12 +20,13 @@ public interface CacheManager {
     /**
      * 往缓存写数据
      * @param cacheKey  缓存Key
-     * @param result    缓存数据
+     * @param wrapper   缓存数据
      * @param method    Method
      * @param args      args
      * @throws CacheCenterConnectionException
      */
-    void setCache(final CacheKeyTO cacheKey, final CacheWrapper<Object> result, final Method method, final Object args[]) throws CacheCenterConnectionException;
+    void setCache(final CacheKeyTO cacheKey, final CacheWrapper<Object> wrapper, final Method method, final Object args[])
+                                                                                                                          throws CacheCenterConnectionException;
 
     /**
      * 根据缓存key获取缓存中的数据
