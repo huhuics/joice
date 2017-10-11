@@ -94,7 +94,6 @@ public class CacheTask implements Runnable, CacheChangeListener {
                 cacheManager.getCache().putAll((ConcurrentHashMap<String, Object>) obj);
             }
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error("", e);
         } finally {
             if (bis != null) {

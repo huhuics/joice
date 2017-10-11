@@ -16,6 +16,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 测试Map类型的缓存
@@ -24,9 +26,11 @@ import org.junit.Test;
  */
 public class MapCacheTest {
 
-    private MapCacheManager mapCache;
+    private static final Logger logger = LoggerFactory.getLogger(MapCacheTest.class);
 
-    private Employee        emp;
+    private MapCacheManager     mapCache;
+
+    private Employee            emp;
 
     @Before
     public void init() {
@@ -41,8 +45,11 @@ public class MapCacheTest {
         emp = new Employee(1, "宋江", dept);
     }
 
+    /**
+     * 测试设置缓存
+     */
     @Test
-    public void testMapCache() throws Exception {
+    public void testSet() throws Exception {
 
         Assert.assertNotNull(mapCache);
 
@@ -60,15 +67,35 @@ public class MapCacheTest {
         Employee cacheEmp = (Employee) cacheRet.getCacheObject();
         Assert.assertTrue(emp.getId() == cacheEmp.getId());
 
-        //等待过期时间
-        //        Thread.sleep(mapCache.getClearAndPersistPeriod() + 1000);
-        //
-        //        cacheRet = mapCache.get(key, null, null);
-        //        Assert.assertTrue(cacheRet == null);
     }
 
+    /**
+     * 测试缓存清理
+     */
+    @Test
+    public void testClear() throws Exception {
+        //组装cacheKey
+        CacheKeyTO key = new CacheKeyTO(mapCache.getConfig().getNamespace(), emp.getId() + "", null);
+
+        CacheWrapper<Object> wrapper = new CacheWrapper<Object>(emp, 2);
+
+        mapCache.setCache(key, wrapper, null, null);
+        CacheWrapper<Object> cacheRet = mapCache.get(key, null, null);
+
+        Assert.assertNotNull(cacheRet.getCacheObject());
+        //等待过期时间
+        Thread.sleep(mapCache.getClearAndPersistPeriod() + 1000);
+
+        cacheRet = mapCache.get(key, null, null);
+        Assert.assertTrue(cacheRet == null);
+    }
+
+    /**
+     * 测试从磁盘读取缓存数据
+     */
     @Test
     public void testLoadCache() throws Exception {
+        Thread.sleep(5000);
         //组装cacheKey
         CacheKeyTO key = new CacheKeyTO(mapCache.getConfig().getNamespace(), emp.getId() + "", null);
         CacheWrapper<Object> cacheRet = mapCache.get(key, null, null);
@@ -80,9 +107,27 @@ public class MapCacheTest {
         Assert.assertTrue(emp.getId() == cacheEmp.getId());
     }
 
+    /**
+     * 测试删除
+     */
     @Test
-    public void testDelete() {
+    public void testDelete() throws Exception {
+        //组装cacheKey
+        CacheKeyTO key = new CacheKeyTO(mapCache.getConfig().getNamespace(), emp.getId() + "", null);
 
+        //组装wrapper
+        CacheWrapper<Object> wrapper = new CacheWrapper<Object>(emp, 60);
+
+        mapCache.setCache(key, wrapper, null, null);
+
+        CacheWrapper<Object> cacheRet = mapCache.get(key, null, null);
+
+        Assert.assertNotNull(cacheRet.getCacheObject());
+
+        mapCache.delete(key);
+        cacheRet = mapCache.get(key, null, null);
+
+        Assert.assertNull(cacheRet);
     }
 
     @After
