@@ -4,16 +4,21 @@
  */
 package org.joice.cache.test.domain;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author HuHui
  * @version $Id: Department.java, v 0.1 2017年10月10日 下午5:01:53 HuHui Exp $
  */
-public class Department {
+public class Department implements Serializable {
 
-    private long   deptId;
+    /**  */
+    private static final long serialVersionUID = -7666091525196727113L;
 
-    private String name;
+    private long              deptId;
+
+    private String            name;
 
     public Department(long deptId, String name) {
         this.deptId = deptId;

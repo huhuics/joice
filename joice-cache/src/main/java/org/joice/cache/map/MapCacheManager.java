@@ -67,7 +67,7 @@ public class MapCacheManager implements CacheManager {
     private boolean                                 copyValueOnSet        = false;
 
     /** 清除和持久化的时间间隔,默认1分钟 */
-    private int                                     clearAndPersistPeriod = 60 * 1000;
+    private int                                     clearAndPersistPeriod = 10 * 1000;
 
     public MapCacheManager(CacheConfig config, Cloner cloner) {
         this.cloner = cloner;

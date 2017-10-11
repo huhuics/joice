@@ -18,7 +18,7 @@ import com.caucho.hessian.io.AbstractMapDeserializer;
 public class SoftReferenceDeserializer extends AbstractMapDeserializer {
 
     @Override
-    public Object readObject(AbstractHessianInput in) throws IOException {
+    public Object readObject(AbstractHessianInput in, Object[] fields) throws IOException {
         try {
             SoftReference<Object> obj = instantiate();
             in.addRef(obj);

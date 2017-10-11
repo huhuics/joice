@@ -12,6 +12,7 @@ import org.joice.cache.test.domain.Department;
 import org.joice.cache.test.domain.Employee;
 import org.joice.cache.to.CacheKeyTO;
 import org.joice.cache.to.CacheWrapper;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +26,8 @@ public class MapCacheTest {
 
     private MapCacheManager mapCache;
 
+    private Employee        emp;
+
     @Before
     public void init() {
         CacheConfig config = new CacheConfig();
@@ -32,16 +35,16 @@ public class MapCacheTest {
 
         mapCache = new MapCacheManager(config, cloner);
         mapCache.start();
+
+        //组装要缓存的对象
+        Department dept = new Department(1, "水泊梁山");
+        emp = new Employee(1, "宋江", dept);
     }
 
     @Test
     public void testMapCache() throws Exception {
 
         Assert.assertNotNull(mapCache);
-
-        //组装要缓存的对象
-        Department dept = new Department(1, "水泊梁山");
-        Employee emp = new Employee(1, "宋江", dept);
 
         //组装cacheKey
         CacheKeyTO key = new CacheKeyTO(mapCache.getConfig().getNamespace(), emp.getId() + "", null);
@@ -53,9 +56,38 @@ public class MapCacheTest {
 
         CacheWrapper<Object> cacheRet = mapCache.get(key, null, null);
 
-        Assert.assertNotNull(cacheRet);
         Assert.assertNotNull(cacheRet.getCacheObject());
         Employee cacheEmp = (Employee) cacheRet.getCacheObject();
         Assert.assertTrue(emp.getId() == cacheEmp.getId());
+
+        //等待过期时间
+        //        Thread.sleep(mapCache.getClearAndPersistPeriod() + 1000);
+        //
+        //        cacheRet = mapCache.get(key, null, null);
+        //        Assert.assertTrue(cacheRet == null);
     }
+
+    @Test
+    public void testLoadCache() throws Exception {
+        //组装cacheKey
+        CacheKeyTO key = new CacheKeyTO(mapCache.getConfig().getNamespace(), emp.getId() + "", null);
+        CacheWrapper<Object> cacheRet = mapCache.get(key, null, null);
+
+        Assert.assertNotNull(cacheRet);
+        Assert.assertNotNull(cacheRet.getCacheObject());
+
+        Employee cacheEmp = (Employee) cacheRet.getCacheObject();
+        Assert.assertTrue(emp.getId() == cacheEmp.getId());
+    }
+
+    @Test
+    public void testDelete() {
+
+    }
+
+    @After
+    public void stop() {
+        mapCache.destory();
+    }
+
 }

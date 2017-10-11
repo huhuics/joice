@@ -4,18 +4,23 @@
  */
 package org.joice.cache.test.domain;
 
+import java.io.Serializable;
+
 /**
  * 测试对象
  * @author HuHui
  * @version $Id: Employee.java, v 0.1 2017年10月10日 下午5:00:37 HuHui Exp $
  */
-public class Employee {
+public class Employee implements Serializable {
 
-    private long       id;
+    /**  */
+    private static final long serialVersionUID = 4960951517707491394L;
 
-    private String     name;
+    private long              id;
 
-    private Department dept;
+    private String            name;
+
+    private Department        dept;
 
     public Employee(long id, String name, Department dept) {
         this.id = id;
