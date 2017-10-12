@@ -4,12 +4,9 @@
  */
 package org.joice.cache.redis;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joice.cache.CacheManager;
@@ -33,49 +30,22 @@ import redis.clients.jedis.ShardedJedisPool;
  */
 public class ShardedJedisCacheManager implements CacheManager {
 
-    private static final Logger             logger             = LoggerFactory.getLogger(ShardedJedisCacheManager.class);
+    private static final Logger           logger             = LoggerFactory.getLogger(ShardedJedisCacheManager.class);
 
-    private static final StringSerializer   keySerializer      = new StringSerializer();
+    private static final StringSerializer keySerializer      = new StringSerializer();
 
-    private final Serializer<Object>        serializer;
+    private final Serializer<Object>      serializer;
 
-    private ShardedJedisPool                shardedJedisPool;
+    private ShardedJedisPool              shardedJedisPool;
 
     /**
      * Hash的缓存时长
      * 等于0时永久缓存;大于0时,主要是为了防止一些已经不用的缓存占用内存;小于0时,则使用@Cache中设置的expire值
      */
-    private int                             hashExpire         = -1;
+    private int                           hashExpire         = -1;
 
     /** 是否通过脚本来设置Hash的缓存时长 */
-    private boolean                         hashExpireByScript = false;
-
-    private static final Map<Jedis, byte[]> hashSetScriptSha   = new ConcurrentHashMap<Jedis, byte[]>();
-
-    private static byte[]                   hashSetScript;
-
-    static {
-        try {
-            String tmpScript = "redis.call('HSET', KEYS[1], KEYS[2], ARGV[1]);\nredis.call('EXPIRE', KEYS[1], tonumber(ARGV[2]));";
-            hashSetScript = tmpScript.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            logger.error("", ex);
-        }
-    }
-
-    private static byte[]                   delScript;
-
-    static {
-        StringBuilder tmp = new StringBuilder();
-        tmp.append("local keys = redis.call('keys', KEYS[1]);\n");
-        tmp.append("if(not keys or #keys == 0) then \n return nil; \n end \n");
-        tmp.append("redis.call('del', unpack(keys)); \n return keys;");
-        try {
-            delScript = tmp.toString().getBytes("UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            logger.error(ex.getMessage(), ex);
-        }
-    }
+    private boolean                       hashExpireByScript = false;
 
     public ShardedJedisCacheManager(Serializer<Object> serializer) {
         this.serializer = serializer;
