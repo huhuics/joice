@@ -67,11 +67,14 @@ public class ShardedJedisCacheTest {
     @Test
     public void testShard() {
         ShardedJedis shardedJedis = shardedJedisPool.getResource();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 2; i++) {
             Jedis shard = shardedJedis.getShard(i + "");
+            System.out.println(shardedJedis.getShardInfo(i + ""));
             shardedJedis.set(i + "", "val: " + i);
             System.out.println(shard.getClient().getHost() + ", key=" + i);
         }
+        String val = shardedJedis.get(1 + "");
+        Assert.assertNotNull(val);
     }
 
     @Test

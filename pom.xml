@@ -102,6 +102,11 @@
 				<artifactId>spring-data-redis</artifactId>
 				<version>${spring-data-redis.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-expression</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
 			<!-- end Spring -->
 
 			<!-- mybatis -->
