@@ -30,6 +30,12 @@ public @interface Cache {
     /** 动态获取缓存过期时间的表达式 */
     String expireExpression() default "";
 
+    /**
+     *  预警自动刷新时间(单位:秒),需满足0<alarmTime<expire才有效
+     *  当缓存在alarmTime时间内即将过期时会自动刷新缓存内容
+     */
+    int alarmTime() default 0;
+
     /** 自定义缓存key,支持表达式 */
     String key();
 

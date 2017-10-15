@@ -5,8 +5,11 @@
 package org.joice.cache.test;
 
 import java.lang.ref.SoftReference;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joice.cache.test.domain.Department;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -39,4 +42,14 @@ public class SoftReferenceTest {
 
     }
 
+    @Test
+    public void testMap() {
+        ConcurrentHashMap<String, String> map = new ConcurrentHashMap<String, String>();
+        String val = map.putIfAbsent("key1", "val1");
+        System.out.println("val=" + val);
+        Assert.assertTrue(StringUtils.equals(val, "val1"));
+        String val2 = map.putIfAbsent("key1", "val1");
+        Assert.assertTrue(StringUtils.equals(val2, "val1"));
+        System.out.println("val2=" + val2);
+    }
 }
