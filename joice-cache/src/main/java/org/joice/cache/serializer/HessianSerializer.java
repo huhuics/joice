@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.joice.cache.exception.SerializationException;
 import org.joice.cache.util.LogUtil;
 import org.slf4j.Logger;
@@ -32,6 +33,9 @@ public class HessianSerializer<T> implements Serializer<T> {
 
     @Override
     public byte[] serialize(T t) throws SerializationException {
+        if (t == null) {
+            return null;
+        }
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         AbstractHessianOutput out = new Hessian2Output(os);
         out.setSerializerFactory(serializerFactory);
@@ -54,6 +58,9 @@ public class HessianSerializer<T> implements Serializer<T> {
     @Override
     @SuppressWarnings("unchecked")
     public T deserialize(byte[] bytes) throws SerializationException {
+        if (ArrayUtils.isEmpty(bytes)) {
+            return null;
+        }
         ByteArrayInputStream is = new ByteArrayInputStream(bytes);
         AbstractHessianInput in = new Hessian2Input(is);
         in.setSerializerFactory(serializerFactory);

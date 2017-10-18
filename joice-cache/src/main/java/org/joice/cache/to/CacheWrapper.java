@@ -9,13 +9,13 @@ package org.joice.cache.to;
  * @author HuHui
  * @version $Id: CacheWrapper.java, v 0.1 2017年10月18日 下午5:06:25 HuHui Exp $
  */
-public class CacheWrapper<T> extends BaseTO {
+public class CacheWrapper extends BaseTO {
 
     /**  */
     private static final long serialVersionUID = -4627300244753708729L;
 
     /** 被缓存的内容 */
-    private T                 obj;
+    private Object            obj;
 
     /** 过期时间,单位:秒.0表示不过期 */
     private int               expireTime       = 0;
@@ -23,21 +23,21 @@ public class CacheWrapper<T> extends BaseTO {
     /** 最后一次访问该缓存时间 */
     private long              lastAccess;
 
-    public CacheWrapper(T obj) {
+    public CacheWrapper(Object obj) {
         this(obj, 0);
     }
 
-    public CacheWrapper(T obj, int expireTime) {
+    public CacheWrapper(Object obj, int expireTime) {
         this.obj = obj;
         this.expireTime = expireTime;
         this.lastAccess = System.currentTimeMillis();
     }
 
-    public T getObj() {
+    public Object getObj() {
         return obj;
     }
 
-    public void setObj(T obj) {
+    public void setObj(Object obj) {
         this.obj = obj;
     }
 

@@ -52,4 +52,13 @@ public class SerializerTest {
         Assert.assertTrue(employee.getId() == deEmp.getId());
     }
 
+    @Test
+    public void testHessianSerializerNull() {
+        byte[] ret = hessianSerializer.serialize(null);
+        Assert.assertTrue(ret == null);
+
+        Employee deRet = hessianSerializer.deserialize(null);
+        Assert.assertTrue(deRet == null);
+    }
+
 }
