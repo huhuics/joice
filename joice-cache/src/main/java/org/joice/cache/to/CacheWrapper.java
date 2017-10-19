@@ -20,8 +20,11 @@ public class CacheWrapper extends BaseTO {
     /** 过期时间,单位:秒.0表示不过期 */
     private int               expireTime       = 0;
 
+    /** 创建时间 */
+    private long              createTime;
+
     /** 最后一次访问该缓存时间 */
-    private long              lastAccess;
+    private long              lastAccessTime;
 
     public CacheWrapper(Object obj) {
         this(obj, 0);
@@ -30,7 +33,18 @@ public class CacheWrapper extends BaseTO {
     public CacheWrapper(Object obj, int expireTime) {
         this.obj = obj;
         this.expireTime = expireTime;
-        this.lastAccess = System.currentTimeMillis();
+        this.createTime = System.currentTimeMillis();
+        this.lastAccessTime = System.currentTimeMillis();
+    }
+
+    /**
+     * 判断该缓存是否已过期
+     */
+    public boolean isExpire() {
+        if (expireTime > 0) {
+            return createTime + expireTime * 1000 < System.currentTimeMillis();
+        }
+        return false;
     }
 
     public Object getObj() {
@@ -49,12 +63,20 @@ public class CacheWrapper extends BaseTO {
         this.expireTime = expireTime;
     }
 
-    public long getLastAccess() {
-        return lastAccess;
+    public long getCreateTime() {
+        return createTime;
     }
 
-    public void setLastAccess(long lastAccess) {
-        this.lastAccess = lastAccess;
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
+    }
+
+    public long getLastAccessTime() {
+        return lastAccessTime;
+    }
+
+    public void setLastAccessTime(long lastAccessTime) {
+        this.lastAccessTime = lastAccessTime;
     }
 
 }
