@@ -4,6 +4,10 @@
  */
 package org.joice.cache.config;
 
+import java.io.File;
+
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * 缓存配置
  * @author HuHui
@@ -17,24 +21,40 @@ public class CacheConfig {
     private String nameSpace;
 
     /** 缓存条数,用于MapCache */
-    private int    cacheNums = 3000;
+    private int    cacheNums      = 3000;
+
+    /** 缓存存储路径 */
+    private String persistecePath = File.separatorChar + "tmp" + File.separatorChar + "joice-cache";
 
     public String getNameSpace() {
         return nameSpace;
     }
 
-    public void setNameSpace(String nameSpace) {
+    public CacheConfig setNameSpace(String nameSpace) {
         this.nameSpace = nameSpace;
+        return this;
     }
 
     public int getCacheNums() {
         return cacheNums;
     }
 
-    public void setCacheNums(int cacheNums) {
+    public CacheConfig setCacheNums(int cacheNums) {
         if (cacheNums > 0) {
             this.cacheNums = cacheNums;
         }
+        return this;
+    }
+
+    public String getPersistecePath() {
+        return persistecePath;
+    }
+
+    public CacheConfig setPersistecePath(String persistecePath) {
+        if (StringUtils.isNotBlank(persistecePath)) {
+            this.persistecePath = persistecePath;
+        }
+        return this;
     }
 
 }

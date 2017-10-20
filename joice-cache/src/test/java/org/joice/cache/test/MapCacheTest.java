@@ -82,4 +82,25 @@ public class MapCacheTest {
         Assert.assertNull(ret);
     }
 
+    @Test
+    public void testDelete() {
+        Assert.assertNotNull(cache);
+        CacheKey cacheKey = new CacheKey(emp.getId() + "");
+
+        CacheWrapper wrapper = new CacheWrapper(emp);
+
+        cache.set(cacheKey, wrapper);
+
+        //删除之前缓存还有数据 
+        CacheWrapper ret = cache.get(cacheKey);
+        Assert.assertNotNull(ret);
+
+        //删除之后缓存没有数据
+        long delCnt = cache.delete(cacheKey);
+        Assert.assertTrue(delCnt == 1);
+
+        ret = cache.get(cacheKey);
+        Assert.assertTrue(ret == null);
+    }
+
 }

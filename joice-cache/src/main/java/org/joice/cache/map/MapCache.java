@@ -4,7 +4,6 @@
  */
 package org.joice.cache.map;
 
-import java.lang.ref.SoftReference;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 使用Map实现本地缓存
- * 默认使用{@link StringSerializer}对缓存的key进行序列化
  * @author HuHui
  * @version $Id: MapCache.java, v 0.1 2017年10月18日 下午8:33:26 HuHui Exp $
  */
@@ -35,6 +33,10 @@ public class MapCache implements Cache {
     private final CacheConfig                       config;
 
     private final ConcurrentHashMap<String, Object> cache;
+
+    private static final Long                       zero   = 0L;
+
+    private static final Long                       one    = 1L;
 
     public MapCache(CacheConfig config) {
         this(new StringSerializer(), config);
@@ -55,14 +57,12 @@ public class MapCache implements Cache {
             return;
         }
         String hfield = cacheKey.getHfield();
-        SoftReference<CacheWrapper> ref = new SoftReference<CacheWrapper>(wrapper);
         if (StringUtils.isBlank(hfield)) {
-            cache.put(key, ref);
+            cache.put(key, wrapper);
         } else { //缓存hash结构的数据
             ConcurrentHashMap<String, CacheWrapper> map = new ConcurrentHashMap<String, CacheWrapper>();
             map.put(hfield, wrapper);
-            SoftReference<ConcurrentHashMap<String, CacheWrapper>> hashMapRef = new SoftReference<ConcurrentHashMap<String, CacheWrapper>>(map);
-            cache.put(key, hashMapRef);
+            cache.put(key, map);
         }
     }
 
@@ -80,20 +80,19 @@ public class MapCache implements Cache {
             try {
                 String hfield;
                 if (StringUtils.isBlank(hfield = cacheKey.getHfield())) {
-                    SoftReference<CacheWrapper> ref = (SoftReference<CacheWrapper>) value;
-                    wrapper = ref.get();
+                    wrapper = (CacheWrapper) value;
                 } else { //hash结构数据
-                    SoftReference<ConcurrentHashMap<String, CacheWrapper>> hashMapRef = (SoftReference<ConcurrentHashMap<String, CacheWrapper>>) value;
-                    ConcurrentHashMap<String, CacheWrapper> map = hashMapRef.get();
+                    ConcurrentHashMap<String, CacheWrapper> map = (ConcurrentHashMap<String, CacheWrapper>) value;
                     wrapper = map.get(hfield);
                 }
             } catch (Exception e) {
-                LogUtil.error(e, logger, "获取缓存异常,cacheKey={0}", cacheKey);
+                LogUtil.error(e, logger, "获取Map缓存异常,cacheKey={0}", cacheKey);
                 return null;
             }
         }
 
         if (wrapper != null && wrapper.isExpire()) {
+            cache.remove(key);
             return null;
         }
 
@@ -101,8 +100,18 @@ public class MapCache implements Cache {
     }
 
     @Override
-    public int delete(CacheKey cacheKey) {
-        return 0;
+    public Long delete(CacheKey cacheKey) {
+        String key;
+        if (cacheKey == null || StringUtils.isEmpty(key = cacheKey.getKey())) {
+            return zero;
+        }
+        Object obj = cache.remove(key);
+
+        return obj == null ? zero : one;
+    }
+
+    public ConcurrentHashMap<String, Object> getCache() {
+        return cache;
     }
 
 }
