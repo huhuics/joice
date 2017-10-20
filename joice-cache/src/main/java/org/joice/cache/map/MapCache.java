@@ -9,8 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.joice.cache.Cache;
 import org.joice.cache.config.CacheConfig;
-import org.joice.cache.serializer.Serializer;
-import org.joice.cache.serializer.StringSerializer;
 import org.joice.cache.to.CacheKey;
 import org.joice.cache.to.CacheWrapper;
 import org.joice.cache.util.LogUtil;
@@ -26,11 +24,10 @@ public class MapCache implements Cache {
 
     private static final Logger                     logger = LoggerFactory.getLogger(MapCache.class);
 
-    /** 序列化类 */
-    private final Serializer<String>                serializer;
-
     /** 缓存配置类 */
     private final CacheConfig                       config;
+
+    private final MapCacheDaemon                    daemon;
 
     private final ConcurrentHashMap<String, Object> cache;
 
@@ -39,14 +36,10 @@ public class MapCache implements Cache {
     private static final Long                       one    = 1L;
 
     public MapCache(CacheConfig config) {
-        this(new StringSerializer(), config);
-    }
-
-    public MapCache(Serializer<String> serializer, CacheConfig config) {
         LogUtil.info(logger, "Map Cache initing...");
-        this.serializer = serializer;
         this.config = config;
         cache = new ConcurrentHashMap<String, Object>(config.getCacheNums());
+        daemon = new MapCacheDaemon(this, config);
         LogUtil.info(logger, "Map Cache init success!");
     }
 
@@ -112,6 +105,20 @@ public class MapCache implements Cache {
 
     public ConcurrentHashMap<String, Object> getCache() {
         return cache;
+    }
+
+    @Override
+    public void clear() {
+        if (cache != null) {
+            cache.clear();
+        }
+    }
+
+    @Override
+    public void shutdown() {
+        daemon.setRun(false);
+        daemon.persistCache();
+        clear();
     }
 
 }

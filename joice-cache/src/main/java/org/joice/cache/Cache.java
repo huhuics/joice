@@ -35,4 +35,14 @@ public interface Cache {
      */
     Long delete(CacheKey cacheKey);
 
+    /**
+     * 清空缓存
+     */
+    void clear();
+
+    /**
+     * 关闭缓存 
+     */
+    void shutdown();
+
 }

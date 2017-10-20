@@ -18,13 +18,19 @@ public class CacheConfig {
     /**
      * 命名空间,可避免多个应用使用缓存时造成key冲突
      */
-    private String nameSpace;
+    private String  nameSpace;
 
     /** 缓存条数,用于MapCache */
-    private int    cacheNums      = 3000;
+    private int     cacheNums          = 3000;
 
     /** 缓存存储路径 */
-    private String persistecePath = File.separatorChar + "tmp" + File.separatorChar + "joice-cache";
+    private String  persistecePath     = File.separatorChar + "tmp" + File.separatorChar + "joice-cache";
+
+    /** 是否持久化缓存 */
+    private boolean isPersist          = true;
+
+    /** 每隔多长时间持久化缓存,单位:秒 */
+    private int     timeBetweenPersist = 5;
 
     public String getNameSpace() {
         return nameSpace;
@@ -54,6 +60,24 @@ public class CacheConfig {
         if (StringUtils.isNotBlank(persistecePath)) {
             this.persistecePath = persistecePath;
         }
+        return this;
+    }
+
+    public boolean isPersist() {
+        return isPersist;
+    }
+
+    public CacheConfig setPersist(boolean isPersist) {
+        this.isPersist = isPersist;
+        return this;
+    }
+
+    public int getTimeBetweenPersist() {
+        return timeBetweenPersist;
+    }
+
+    public CacheConfig setTimeBetweenPersist(int timeBetweenPersist) {
+        this.timeBetweenPersist = timeBetweenPersist;
         return this;
     }
 

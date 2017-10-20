@@ -6,6 +6,7 @@ package org.joice.cache.map;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -37,7 +38,7 @@ public class MapCacheDaemon implements Runnable {
 
     private final Serializer<Object> serializer;
 
-    private boolean                  isRun    = false;
+    private boolean                  isRun    = true;
 
     private final String             fileName = "map.cache";
 
@@ -46,13 +47,36 @@ public class MapCacheDaemon implements Runnable {
         this.mapCache = mapCache;
         this.config = config;
         this.serializer = new HessianSerializer<Object>();
+        Thread thread = new Thread(this);
+        thread.setDaemon(true);
+        thread.start();
         LogUtil.info(logger, "MapCacheDaemon init success!");
+    }
+
+    @Override
+    public void run() {
+        //读取磁盘缓存
+        readCacheFromDisk();
+
+        while (isRun) {
+            try {
+                Thread.sleep(config.getTimeBetweenPersist() * 1000);
+            } catch (InterruptedException e) {
+                logger.error("", e);
+            }
+            //持久化缓存
+            persistCache();
+        }
     }
 
     /**
      * 持久化缓存数据
      */
     public void persistCache() {
+        if (!config.isPersist()) {
+            return;
+        }
+        LogUtil.info(logger, "开始持久化缓存");
         File file = createCacheFile();
         OutputStream out = null;
         BufferedOutputStream bos = null;
@@ -70,6 +94,7 @@ public class MapCacheDaemon implements Runnable {
                 logger.error("", e);
             }
         }
+        LogUtil.info(logger, "缓存持久化完成");
     }
 
     /**
@@ -77,20 +102,28 @@ public class MapCacheDaemon implements Runnable {
      */
     @SuppressWarnings("unchecked")
     public void readCacheFromDisk() {
+        LogUtil.info(logger, "开始从磁盘读取缓存");
         String filePath = getSavePath() + fileName;
         File file = new File(filePath);
-        int fileLength = (int) file.length();
-        if (file.exists() && fileLength > 0) {
+        if (file.exists() && file.length() > 0) {
             InputStream in = null;
             BufferedInputStream bis = null;
+            ByteArrayOutputStream baos = null;
             try {
                 in = new FileInputStream(file);
                 bis = new BufferedInputStream(in);
-                byte[] b = new byte[fileLength];
-                bis.read(b);
-                Object obj = serializer.deserialize(b);
+                baos = new ByteArrayOutputStream();
+
+                byte[] bytes = new byte[1024];
+                while (bis.read(bytes) != -1) {
+                    baos.write(bytes);
+                }
+
+                Object obj = serializer.deserialize(baos.toByteArray());
                 if (obj instanceof ConcurrentHashMap) {
-                    mapCache.getCache().putAll((ConcurrentHashMap<String, Object>) obj);
+                    ConcurrentHashMap<String, Object> map = (ConcurrentHashMap<String, Object>) obj;
+                    mapCache.getCache().putAll(map);
+                    LogUtil.info(logger, "缓存读取了{0}个对象", map.size());
                 }
             } catch (Exception e) {
                 logger.error("", e);
@@ -98,11 +131,13 @@ public class MapCacheDaemon implements Runnable {
                 try {
                     bis.close();
                     in.close();
+                    baos.close();
                 } catch (IOException e) {
                     logger.error("", e);
                 }
             }
         }
+        LogUtil.info(logger, "缓存读取完毕");
     }
 
     public File createCacheFile() {
@@ -137,8 +172,12 @@ public class MapCacheDaemon implements Runnable {
         return savePath;
     }
 
-    @Override
-    public void run() {
+    public boolean isRun() {
+        return isRun;
+    }
+
+    public void setRun(boolean isRun) {
+        this.isRun = isRun;
     }
 
 }
