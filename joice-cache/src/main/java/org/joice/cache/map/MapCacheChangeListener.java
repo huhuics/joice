@@ -4,9 +4,10 @@
  */
 package org.joice.cache.map;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.joice.cache.config.CacheConfig;
+import org.joice.cache.discard.CacheDiscard;
+import org.joice.cache.discard.CacheDiscardFactory;
+import org.joice.cache.enums.CacheDiscardPolicyEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,55 +18,25 @@ import org.slf4j.LoggerFactory;
  */
 public class MapCacheChangeListener {
 
-    private static final Logger logger   = LoggerFactory.getLogger(MapCacheChangeListener.class);
+    private static final Logger          logger  = LoggerFactory.getLogger(MapCacheChangeListener.class);
 
-    private final MapCache      cache;
+    private final MapCache               cache;
 
-    private final int           maxCacheCnt;
+    private final CacheDiscardPolicyEnum policyEnum;
 
-    private final String        discardPolicy;
-
-    /** 缓存计数 */
-    private final AtomicInteger cacheCnt = new AtomicInteger(0);
+    private final CacheDiscardFactory    factory = CacheDiscardFactory.getInstance();
 
     public MapCacheChangeListener(CacheConfig config, MapCache cache) {
         this.cache = cache;
-        this.maxCacheCnt = config.getMaxCacheNums();
-        this.discardPolicy = config.getDiscardPolicy();
+        this.policyEnum = CacheDiscardPolicyEnum.valueOf(config.getDiscardPolicy().toUpperCase());
     }
 
     /**
-     * 缓存数量加1
+     * 根据策略丢弃缓存
      */
-    public void increase() {
-        if (cacheCnt.incrementAndGet() > maxCacheCnt) { //超过最大缓存数,则根据策略删除缓存
-
-        }
-    }
-
-    /**
-     * 缓存数量加n
-     */
-    public void increase(int n) {
-        if (n > 0) {
-            for (int i = 0; i < n; i++) {
-                increase();
-            }
-        }
-    }
-
-    /**
-     * 缓存数量减1
-     */
-    public void decrease() {
-        cacheCnt.decrementAndGet();
-    }
-
-    /**
-     * 缓存数量清0
-     */
-    public void clear() {
-        cacheCnt.set(0);
+    public void discard() {
+        CacheDiscard cacheDiscard = factory.getCacheDiscard(policyEnum);
+        cacheDiscard.discard(cache);
     }
 
 }

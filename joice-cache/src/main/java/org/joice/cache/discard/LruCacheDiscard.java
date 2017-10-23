@@ -14,11 +14,11 @@ import org.joice.cache.to.CacheKey;
 import org.joice.cache.to.CacheWrapper;
 
 /**
- * FIFO缓存丢弃策略
+ * 最近最少使用丢弃策略
  * @author HuHui
- * @version $Id: FifoCacheDiscard.java, v 0.1 2017年10月23日 下午9:12:27 HuHui Exp $
+ * @version $Id: LruCacheDiscard.java, v 0.1 2017年10月23日 下午11:22:35 HuHui Exp $
  */
-public class FifoCacheDiscard implements CacheDiscard {
+public class LruCacheDiscard implements CacheDiscard {
 
     @Override
     public void discard(MapCache mapCache) {
@@ -30,25 +30,26 @@ public class FifoCacheDiscard implements CacheDiscard {
         ConcurrentHashMap<String, Object> cache = mapCache.getCache();
         Iterator<Entry<String, Object>> iterator = cache.entrySet().iterator();
 
-        //寻找最早被缓存的对象
-        String earliestKey = null;
-        CacheWrapper earliestWrapper = new CacheWrapper(null);
+        //寻找lastAccessTime最小的对象
+        String minAcsKey = null;
+        CacheWrapper minAcsWrapper = new CacheWrapper(null);
         while (iterator.hasNext()) {
             Entry<String, Object> entry = iterator.next();
             String key = entry.getKey();
             Object obj = entry.getValue();
             if (obj instanceof CacheWrapper) {
                 CacheWrapper wrapper = (CacheWrapper) obj;
-                if (wrapper.getCreateTime() < earliestWrapper.getCreateTime()) {
-                    earliestKey = key;
+                if (wrapper.getLastAccessTime() < minAcsWrapper.getLastAccessTime()) {
+                    minAcsKey = key;
                 }
             }
         }
 
         //构造需要被删除的缓存CacheKey
-        CacheKey delKey = new CacheKey(mapCache.getConfig().getNameSpace(), earliestKey);
+        CacheKey delKey = new CacheKey(mapCache.getConfig().getNameSpace(), minAcsKey);
 
         mapCache.delete(delKey);
 
     }
+
 }

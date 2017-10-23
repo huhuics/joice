@@ -4,6 +4,8 @@
  */
 package org.joice.cache.discard;
 
+import org.joice.cache.map.MapCache;
+
 /**
  * 缓存丢弃接口
  * @author HuHui
@@ -11,6 +13,10 @@ package org.joice.cache.discard;
  */
 public interface CacheDiscard {
 
-    void discard();
+    /**
+     * 丢弃缓存方法
+     * @param mapCache
+     */
+    void discard(MapCache mapCache);
 
 }

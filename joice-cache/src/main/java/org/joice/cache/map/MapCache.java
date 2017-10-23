@@ -31,6 +31,8 @@ public class MapCache implements Cache {
 
     private final ConcurrentHashMap<String, Object> cache;
 
+    private final MapCacheChangeListener            listener;
+
     private Thread                                  daemonThread;
 
     private static final Long                       zero   = 0L;
@@ -39,12 +41,20 @@ public class MapCache implements Cache {
 
     public MapCache(CacheConfig config) {
         LogUtil.info(logger, "Map Cache initing...");
+
         this.config = config;
         cache = new ConcurrentHashMap<String, Object>(config.getMaxCacheNums());
         daemon = new MapCacheDaemon(this, config);
+
         //读取磁盘缓存
         daemon.readCacheFromDisk();
+
+        //启动守护线程
         startDaemon();
+
+        //创建缓存更改监听器
+        listener = new MapCacheChangeListener(config, this);
+
         LogUtil.info(logger, "Map Cache init success!");
     }
 
@@ -55,6 +65,10 @@ public class MapCache implements Cache {
             return;
         }
         cache.put(key, wrapper);
+
+        if (cache.size() > config.getMaxCacheNums()) {
+            listener.discard();
+        }
     }
 
     @Override
