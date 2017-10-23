@@ -31,6 +31,8 @@ public class MapCache implements Cache {
 
     private final ConcurrentHashMap<String, Object> cache;
 
+    private Thread                                  daemonThread;
+
     private static final Long                       zero   = 0L;
 
     private static final Long                       one    = 1L;
@@ -38,10 +40,11 @@ public class MapCache implements Cache {
     public MapCache(CacheConfig config) {
         LogUtil.info(logger, "Map Cache initing...");
         this.config = config;
-        cache = new ConcurrentHashMap<String, Object>(config.getCacheNums());
+        cache = new ConcurrentHashMap<String, Object>(config.getMaxCacheNums());
         daemon = new MapCacheDaemon(this, config);
         //读取磁盘缓存
         daemon.readCacheFromDisk();
+        startDaemon();
         LogUtil.info(logger, "Map Cache init success!");
     }
 
@@ -51,18 +54,10 @@ public class MapCache implements Cache {
         if (cacheKey == null || StringUtils.isEmpty(key = cacheKey.getKey()) || wrapper == null) {
             return;
         }
-        String hfield = cacheKey.getHfield();
-        if (StringUtils.isBlank(hfield)) {
-            cache.put(key, wrapper);
-        } else { //缓存hash结构的数据
-            ConcurrentHashMap<String, CacheWrapper> map = new ConcurrentHashMap<String, CacheWrapper>();
-            map.put(hfield, wrapper);
-            cache.put(key, map);
-        }
+        cache.put(key, wrapper);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public CacheWrapper get(CacheKey cacheKey) {
         String key;
         if (cacheKey == null || StringUtils.isEmpty(key = cacheKey.getKey())) {
@@ -73,13 +68,7 @@ public class MapCache implements Cache {
         Object value = cache.get(key);
         if (value != null) {
             try {
-                String hfield;
-                if (StringUtils.isBlank(hfield = cacheKey.getHfield())) {
-                    wrapper = (CacheWrapper) value;
-                } else { //hash结构数据
-                    ConcurrentHashMap<String, CacheWrapper> map = (ConcurrentHashMap<String, CacheWrapper>) value;
-                    wrapper = map.get(hfield);
-                }
+                wrapper = (CacheWrapper) value;
                 wrapper.setLastAccessTime(System.currentTimeMillis());
             } catch (Exception e) {
                 LogUtil.error(e, logger, "获取Map缓存异常,cacheKey={0}", cacheKey);
@@ -88,7 +77,7 @@ public class MapCache implements Cache {
         }
 
         if (wrapper != null && wrapper.isExpire()) {
-            cache.remove(key);//TODO bug
+            cache.remove(key);
             return null;
         }
 
@@ -119,9 +108,28 @@ public class MapCache implements Cache {
 
     @Override
     public void shutdown() {
-        daemon.interrupt();
+        interruptDaemon();
         daemon.persistCache();
         clear();
+    }
+
+    private synchronized void startDaemon() {
+        if (daemonThread == null) {
+            daemonThread = new Thread(daemon);
+            daemonThread.setDaemon(true);
+            daemonThread.start();
+        }
+    }
+
+    private synchronized void interruptDaemon() {
+        daemon.setRun(false);
+        if (daemonThread != null) {
+            daemonThread.interrupt();
+        }
+    }
+
+    public CacheConfig getConfig() {
+        return config;
     }
 
 }

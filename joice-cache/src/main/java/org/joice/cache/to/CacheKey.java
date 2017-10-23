@@ -21,18 +21,11 @@ public class CacheKey extends BaseTO {
 
     private String            key;
 
-    /** 此字段如不为空表示缓存存储在hash结构中 */
-    private String            hfield           = null;
-
     public CacheKey(String key) {
         this(null, key);
     }
 
     public CacheKey(String nameSpace, String key) {
-        this(nameSpace, key, null);
-    }
-
-    public CacheKey(String nameSpace, String key, String hfield) {
         this.nameSpace = nameSpace;
         StringBuilder sb = new StringBuilder();
         if (StringUtils.isNotBlank(nameSpace)) {
@@ -40,7 +33,6 @@ public class CacheKey extends BaseTO {
         }
         sb.append(key);
         this.key = sb.toString();
-        this.hfield = hfield;
     }
 
     public String getNameSpace() {
@@ -57,14 +49,6 @@ public class CacheKey extends BaseTO {
 
     public void setKey(String key) {
         this.key = key;
-    }
-
-    public String getHfield() {
-        return hfield;
-    }
-
-    public void setHfield(String hfield) {
-        this.hfield = hfield;
     }
 
 }

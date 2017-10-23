@@ -45,14 +45,11 @@ public class MapCacheDaemon implements Runnable {
 
     private final String             fileName = "map.cache";
 
-    private Thread                   thread   = null;
-
     public MapCacheDaemon(MapCache mapCache, CacheConfig config) {
         LogUtil.info(logger, "MapCacheDaemon init...");
         this.mapCache = mapCache;
         this.config = config;
         this.serializer = new HessianSerializer<Object>();
-        startThread();
         LogUtil.info(logger, "MapCacheDaemon init success!");
     }
 
@@ -74,7 +71,6 @@ public class MapCacheDaemon implements Runnable {
     /**
      * 清理过期缓存
      */
-    @SuppressWarnings("unchecked")
     public void clearCache() {
         LogUtil.info(logger, "开始清理过期缓存");
         int cnt = 0;
@@ -88,20 +84,6 @@ public class MapCacheDaemon implements Runnable {
                 if (wrapper.isExpire()) {
                     iterator.remove();
                     ++cnt;
-                }
-            } else if (obj instanceof ConcurrentHashMap) {
-                ConcurrentHashMap<String, CacheWrapper> map = (ConcurrentHashMap<String, CacheWrapper>) obj;
-                Iterator<Entry<String, CacheWrapper>> it = map.entrySet().iterator();
-                while (it.hasNext()) {
-                    Entry<String, CacheWrapper> _entry = it.next();
-                    CacheWrapper wrapper = _entry.getValue();
-                    if (wrapper.isExpire()) {
-                        it.remove();
-                        ++cnt;
-                    }
-                }
-                if (map.isEmpty()) { //如果Map为空,则清理
-                    iterator.remove();
                 }
             }
         }
@@ -209,21 +191,6 @@ public class MapCacheDaemon implements Runnable {
             savePath = "F:" + configPath + File.separatorChar;
         }
         return savePath;
-    }
-
-    public synchronized void startThread() {
-        if (thread == null) {
-            thread = new Thread(this);
-            thread.setDaemon(true);
-            thread.start();
-        }
-    }
-
-    public synchronized void interrupt() {
-        isRun = false;
-        if (thread != null) {
-            thread.interrupt();
-        }
     }
 
     public boolean isRun() {

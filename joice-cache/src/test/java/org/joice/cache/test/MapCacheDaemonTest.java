@@ -11,7 +11,6 @@ import org.joice.cache.test.domain.Department;
 import org.joice.cache.test.domain.Employee;
 import org.joice.cache.to.CacheKey;
 import org.joice.cache.to.CacheWrapper;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,6 +50,7 @@ public class MapCacheDaemonTest {
 
     @Test
     public void testReadCache() {
+        mapCache.clear();
         Assert.assertTrue(mapCache.getCache().isEmpty());
         daemon.readCacheFromDisk();
         CacheKey cacheKey = new CacheKey(emp.getId() + "");
@@ -63,13 +63,21 @@ public class MapCacheDaemonTest {
     }
 
     @Test
-    public void testClearCache() {
+    public void testClearCache() throws InterruptedException {
+        int expireTime = 3;
+        CacheKey cacheKey = new CacheKey(emp.getId() + "");
+        CacheWrapper wrapper = new CacheWrapper(emp, expireTime);
 
-    }
+        mapCache.set(cacheKey, wrapper);
+        CacheWrapper ret = mapCache.get(cacheKey);
+        Assert.assertNotNull(ret);
 
-    @After
-    public void interrupt() {
-        daemon.interrupt();
+        Thread.sleep(expireTime * 1000 + 500);
+
+        daemon.clearCache();
+
+        ret = mapCache.get(cacheKey);
+        Assert.assertNull(ret);
     }
 
 }

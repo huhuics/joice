@@ -58,32 +58,6 @@ public class MapCacheTest {
     }
 
     @Test
-    public void testHashSetAndGet() {
-        Assert.assertNotNull(cache);
-        CacheKey cacheKey = new CacheKey(cacheConfig.getNameSpace(), emp.getId() + "", dept.getDeptId() + "");
-        CacheWrapper wrapper = new CacheWrapper(emp);
-
-        cache.set(cacheKey, wrapper);
-
-        CacheWrapper ret = cache.get(cacheKey);
-        Assert.assertNotNull(ret);
-        Assert.assertTrue(((Employee) (ret.getObj())).getId() == emp.getId());
-    }
-
-    @Test
-    public void testHashSetException() {
-        Assert.assertNotNull(cache);
-        CacheKey cacheKey = new CacheKey(cacheConfig.getNameSpace(), emp.getId() + "", dept.getDeptId() + "");
-        CacheWrapper wrapper = new CacheWrapper(emp);
-
-        cache.set(cacheKey, wrapper);
-
-        cacheKey.setHfield(null);//ClassCastException
-        CacheWrapper ret = cache.get(cacheKey);
-        Assert.assertNull(ret);
-    }
-
-    @Test
     public void testDelete() {
         Assert.assertNotNull(cache);
         CacheKey cacheKey = new CacheKey(emp.getId() + "");

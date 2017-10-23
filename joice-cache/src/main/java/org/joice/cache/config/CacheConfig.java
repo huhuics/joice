@@ -7,6 +7,7 @@ package org.joice.cache.config;
 import java.io.File;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joice.cache.enums.CacheDiscardPolicyEnum;
 
 /**
  * 缓存配置
@@ -21,7 +22,12 @@ public class CacheConfig {
     private String  nameSpace;
 
     /** 缓存条数,用于MapCache */
-    private int     cacheNums          = 3000;
+    private int     maxCacheNums       = 3000;
+
+    /**
+     * 当缓存数据量到达maxCacheNums时采取的缓存丢弃策略,默认为FIFO
+     */
+    private String  discardPolicy      = CacheDiscardPolicyEnum.FIFO.name();
 
     /** 缓存存储路径 */
     private String  persistecePath     = File.separatorChar + "tmp" + File.separatorChar + "joice-cache";
@@ -41,13 +47,13 @@ public class CacheConfig {
         return this;
     }
 
-    public int getCacheNums() {
-        return cacheNums;
+    public int getMaxCacheNums() {
+        return maxCacheNums;
     }
 
-    public CacheConfig setCacheNums(int cacheNums) {
-        if (cacheNums > 0) {
-            this.cacheNums = cacheNums;
+    public CacheConfig setMaxCacheNums(int maxCacheNums) {
+        if (maxCacheNums > 0) {
+            this.maxCacheNums = maxCacheNums;
         }
         return this;
     }
@@ -79,6 +85,14 @@ public class CacheConfig {
     public CacheConfig setTimeBetweenPersist(int timeBetweenPersist) {
         this.timeBetweenPersist = timeBetweenPersist;
         return this;
+    }
+
+    public String getDiscardPolicy() {
+        return discardPolicy;
+    }
+
+    public void setDiscardPolicy(String discardPolicy) {
+        this.discardPolicy = discardPolicy;
     }
 
 }
