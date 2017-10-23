@@ -40,6 +40,8 @@ public class MapCache implements Cache {
         this.config = config;
         cache = new ConcurrentHashMap<String, Object>(config.getCacheNums());
         daemon = new MapCacheDaemon(this, config);
+        //读取磁盘缓存
+        daemon.readCacheFromDisk();
         LogUtil.info(logger, "Map Cache init success!");
     }
 
@@ -78,6 +80,7 @@ public class MapCache implements Cache {
                     ConcurrentHashMap<String, CacheWrapper> map = (ConcurrentHashMap<String, CacheWrapper>) value;
                     wrapper = map.get(hfield);
                 }
+                wrapper.setLastAccessTime(System.currentTimeMillis());
             } catch (Exception e) {
                 LogUtil.error(e, logger, "获取Map缓存异常,cacheKey={0}", cacheKey);
                 return null;
@@ -85,7 +88,7 @@ public class MapCache implements Cache {
         }
 
         if (wrapper != null && wrapper.isExpire()) {
-            cache.remove(key);
+            cache.remove(key);//TODO bug
             return null;
         }
 
@@ -116,7 +119,7 @@ public class MapCache implements Cache {
 
     @Override
     public void shutdown() {
-        daemon.setRun(false);
+        daemon.interrupt();
         daemon.persistCache();
         clear();
     }

@@ -13,11 +13,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.joice.cache.config.CacheConfig;
 import org.joice.cache.serializer.HessianSerializer;
 import org.joice.cache.serializer.Serializer;
+import org.joice.cache.to.CacheWrapper;
 import org.joice.cache.util.LogUtil;
 import org.joice.cache.util.OSUtil;
 import org.slf4j.Logger;
@@ -42,23 +45,22 @@ public class MapCacheDaemon implements Runnable {
 
     private final String             fileName = "map.cache";
 
+    private Thread                   thread   = null;
+
     public MapCacheDaemon(MapCache mapCache, CacheConfig config) {
         LogUtil.info(logger, "MapCacheDaemon init...");
         this.mapCache = mapCache;
         this.config = config;
         this.serializer = new HessianSerializer<Object>();
-        Thread thread = new Thread(this);
-        thread.setDaemon(true);
-        thread.start();
+        startThread();
         LogUtil.info(logger, "MapCacheDaemon init success!");
     }
 
     @Override
     public void run() {
-        //读取磁盘缓存
-        readCacheFromDisk();
-
         while (isRun) {
+            //清理过期缓存
+            clearCache();
             try {
                 Thread.sleep(config.getTimeBetweenPersist() * 1000);
             } catch (InterruptedException e) {
@@ -67,6 +69,43 @@ public class MapCacheDaemon implements Runnable {
             //持久化缓存
             persistCache();
         }
+    }
+
+    /**
+     * 清理过期缓存
+     */
+    @SuppressWarnings("unchecked")
+    public void clearCache() {
+        LogUtil.info(logger, "开始清理过期缓存");
+        int cnt = 0;
+        ConcurrentHashMap<String, Object> cache = mapCache.getCache();
+        Iterator<Entry<String, Object>> iterator = cache.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Entry<String, Object> entry = iterator.next();
+            Object obj = entry.getValue();
+            if (obj instanceof CacheWrapper) {
+                CacheWrapper wrapper = (CacheWrapper) obj;
+                if (wrapper.isExpire()) {
+                    iterator.remove();
+                    ++cnt;
+                }
+            } else if (obj instanceof ConcurrentHashMap) {
+                ConcurrentHashMap<String, CacheWrapper> map = (ConcurrentHashMap<String, CacheWrapper>) obj;
+                Iterator<Entry<String, CacheWrapper>> it = map.entrySet().iterator();
+                while (it.hasNext()) {
+                    Entry<String, CacheWrapper> _entry = it.next();
+                    CacheWrapper wrapper = _entry.getValue();
+                    if (wrapper.isExpire()) {
+                        it.remove();
+                        ++cnt;
+                    }
+                }
+                if (map.isEmpty()) { //如果Map为空,则清理
+                    iterator.remove();
+                }
+            }
+        }
+        LogUtil.info(logger, "过期缓存清理完毕,清理数量:{0}", cnt);
     }
 
     /**
@@ -170,6 +209,21 @@ public class MapCacheDaemon implements Runnable {
             savePath = "F:" + configPath + File.separatorChar;
         }
         return savePath;
+    }
+
+    public synchronized void startThread() {
+        if (thread == null) {
+            thread = new Thread(this);
+            thread.setDaemon(true);
+            thread.start();
+        }
+    }
+
+    public synchronized void interrupt() {
+        isRun = false;
+        if (thread != null) {
+            thread.interrupt();
+        }
     }
 
     public boolean isRun() {

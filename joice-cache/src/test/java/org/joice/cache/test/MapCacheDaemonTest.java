@@ -11,6 +11,7 @@ import org.joice.cache.test.domain.Department;
 import org.joice.cache.test.domain.Employee;
 import org.joice.cache.to.CacheKey;
 import org.joice.cache.to.CacheWrapper;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -59,6 +60,16 @@ public class MapCacheDaemonTest {
 
         Assert.assertNotNull(cacheEmp);
         Assert.assertTrue(emp.getId() == cacheEmp.getId());
+    }
+
+    @Test
+    public void testClearCache() {
+
+    }
+
+    @After
+    public void interrupt() {
+        daemon.interrupt();
     }
 
 }

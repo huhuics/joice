@@ -10,6 +10,7 @@ import org.joice.cache.test.domain.Department;
 import org.joice.cache.test.domain.Employee;
 import org.joice.cache.to.CacheKey;
 import org.joice.cache.to.CacheWrapper;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -101,6 +102,11 @@ public class MapCacheTest {
 
         ret = cache.get(cacheKey);
         Assert.assertTrue(ret == null);
+    }
+
+    @After
+    public void shutdown() {
+        cache.shutdown();
     }
 
 }
