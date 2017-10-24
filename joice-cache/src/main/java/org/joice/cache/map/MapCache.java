@@ -75,15 +75,14 @@ public class MapCache implements Cache {
         }
 
         CacheWrapper wrapper = null;
-        Object value = cache.get(key);
-        if (value != null) {
-            try {
+        try {
+            Object value = cache.get(key);
+            if (value != null) {
                 wrapper = (CacheWrapper) value;
                 wrapper.setLastAccessTime(System.currentTimeMillis());
-            } catch (Exception e) {
-                LogUtil.error(e, logger, "获取Map缓存异常,cacheKey={0}", cacheKey);
-                return null;
             }
+        } catch (Exception e) {
+            LogUtil.error(e, logger, "查询Map缓存失败,cacheKey={0}", cacheKey);
         }
 
         if (wrapper != null && wrapper.isExpire()) {
@@ -95,14 +94,14 @@ public class MapCache implements Cache {
     }
 
     @Override
-    public int delete(CacheKey cacheKey) {
+    public Long delete(CacheKey cacheKey) {
         String key;
         if (cacheKey == null || StringUtils.isEmpty(key = cacheKey.getKey())) {
-            return 0;
+            return 0L;
         }
         Object obj = cache.remove(key);
 
-        return obj == null ? 0 : 1;
+        return obj == null ? 0L : 1L;
     }
 
     public ConcurrentHashMap<String, Object> getCache() {
