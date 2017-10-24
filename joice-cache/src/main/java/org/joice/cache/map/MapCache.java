@@ -129,7 +129,7 @@ public class MapCache implements Cache {
 
     private synchronized void startDaemon() {
         if (daemonThread == null) {
-            daemonThread = new Thread(daemon);
+            daemonThread = new Thread(daemon, "map-cache-daemon");
             daemonThread.setDaemon(true);
             daemonThread.start();
         }

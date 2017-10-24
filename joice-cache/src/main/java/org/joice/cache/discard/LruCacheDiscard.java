@@ -12,6 +12,9 @@ import org.apache.commons.collections4.MapUtils;
 import org.joice.cache.map.MapCache;
 import org.joice.cache.to.CacheKey;
 import org.joice.cache.to.CacheWrapper;
+import org.joice.cache.util.LogUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 最近最少使用丢弃策略
@@ -19,6 +22,8 @@ import org.joice.cache.to.CacheWrapper;
  * @version $Id: LruCacheDiscard.java, v 0.1 2017年10月23日 下午11:22:35 HuHui Exp $
  */
 public class LruCacheDiscard implements CacheDiscard {
+
+    private static final Logger logger = LoggerFactory.getLogger(LruCacheDiscard.class);
 
     @Override
     public void discard(MapCache mapCache) {
@@ -41,6 +46,7 @@ public class LruCacheDiscard implements CacheDiscard {
                 CacheWrapper wrapper = (CacheWrapper) obj;
                 if (wrapper.getLastAccessTime() < minAcsWrapper.getLastAccessTime()) {
                     minAcsKey = key;
+                    minAcsWrapper = wrapper;
                 }
             }
         }
@@ -49,6 +55,8 @@ public class LruCacheDiscard implements CacheDiscard {
         CacheKey delKey = new CacheKey(mapCache.getConfig().getNameSpace(), minAcsKey);
 
         mapCache.delete(delKey);
+
+        LogUtil.info(logger, "LRU被删除对象key={0}", delKey);
 
     }
 
