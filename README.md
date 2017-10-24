@@ -25,9 +25,13 @@
 7. 缓存和Session：注解redis缓存数据，Spring-session和redis实现分布式session同步，重启服务会话不丢失。    
 
 8. 多系统交互：Dubbo、RocketMQ多系统交互。    
-    + [RocketMQ知识点总结](https://github.com/huhuics/Accumulate/blob/master/%E6%9E%B6%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95/RocketMQ%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.md)
+    + [RocketMQ知识点总结](https://github.com/huhuics/Accumulate/blob/master/%E6%9E%B6%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95/RocketMQ%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.md)
 
 9. 日志：logback打印日志，同时基于时间和文件大小分割日志文件。    
+
+10. 缓存    
+    + 本地缓存：使用`ConcurrentHashMap`实现，支持缓存持久化、缓存失效策略等等，使用方式可参考 [MapCache测试用例](https://github.com/huhuics/joice/blob/master/joice-cache/src/test/java/org/joice/cache/test/MapCacheTest.java)    
+    + Redis缓存
 
 
 # 启动    
