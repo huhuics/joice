@@ -35,10 +35,6 @@ public class MapCache implements Cache {
 
     private Thread                                  daemonThread;
 
-    private static final Long                       zero   = 0L;
-
-    private static final Long                       one    = 1L;
-
     public MapCache(CacheConfig config) {
         LogUtil.info(logger, "Map Cache initing...");
 
@@ -99,14 +95,14 @@ public class MapCache implements Cache {
     }
 
     @Override
-    public Long delete(CacheKey cacheKey) {
+    public int delete(CacheKey cacheKey) {
         String key;
         if (cacheKey == null || StringUtils.isEmpty(key = cacheKey.getKey())) {
-            return zero;
+            return 0;
         }
         Object obj = cache.remove(key);
 
-        return obj == null ? zero : one;
+        return obj == null ? 0 : 1;
     }
 
     public ConcurrentHashMap<String, Object> getCache() {

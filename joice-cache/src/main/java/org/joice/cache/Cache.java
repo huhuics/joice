@@ -33,7 +33,7 @@ public interface Cache {
      * @param cacheKey  缓存的key,不能为空 
      * @return          删除缓存的数量
      */
-    Long delete(CacheKey cacheKey);
+    int delete(CacheKey cacheKey);
 
     /**
      * 清空缓存

@@ -76,8 +76,6 @@ public class CacheDiscardTest {
             Thread.sleep(10);
         }
 
-        Thread.sleep(20);
-
         //依次访问前5个缓存对象
         for (int i = 0; i < 5; i++) {
             CacheKey key = new CacheKey(i + "");
