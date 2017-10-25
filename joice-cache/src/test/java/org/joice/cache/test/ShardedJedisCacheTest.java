@@ -7,6 +7,7 @@ package org.joice.cache.test;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joice.cache.config.CacheConfig;
 import org.joice.cache.redis.ShardedJedisCache;
 import org.joice.cache.test.domain.Department;
 import org.joice.cache.test.domain.Employee;
@@ -36,6 +37,9 @@ public class ShardedJedisCacheTest {
 
     @Before
     public void init() {
+
+        CacheConfig config = new CacheConfig();
+
         List<JedisShardInfo> shards = new ArrayList<JedisShardInfo>();
         JedisShardInfo info1 = new JedisShardInfo("168.33.131.55", 6379, "redis-machine-1");
         JedisShardInfo info2 = new JedisShardInfo("168.33.130.79", 6379, "redis-machine-2");
@@ -43,7 +47,7 @@ public class ShardedJedisCacheTest {
         shards.add(info2);
 
         ShardedJedis shardedJedis = new ShardedJedis(shards);
-        cache = new ShardedJedisCache(shardedJedis);
+        cache = new ShardedJedisCache(shardedJedis, config);
 
         //初始化数据
         Employee emp1 = new Employee(1L, "卢俊义", new Department(1L, "管理层"));

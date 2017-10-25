@@ -12,11 +12,11 @@ import java.lang.annotation.Target;
 /**
  * 缓存注解
  * @author HuHui
- * @version $Id: Cache.java, v 0.1 2017年10月24日 下午6:41:05 HuHui Exp $
+ * @version $Id: Cacheable.java, v 0.1 2017年10月24日 下午6:41:05 HuHui Exp $
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Cache {
+public @interface Cacheable {
 
     /** 缓存key */
     String key() default "";

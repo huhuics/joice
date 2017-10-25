@@ -6,10 +6,10 @@ package org.joice.service.busi;
 
 import javax.annotation.Resource;
 
-import org.joice.cache.annotation.Cache;
-import org.joice.cache.util.LogUtil;
+import org.joice.cache.annotation.Cacheable;
 import org.joice.common.dao.BizPayOrderMapper;
 import org.joice.common.dao.domain.BizPayOrder;
+import org.joice.common.util.LogUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,8 +27,8 @@ public class PayOrderServiceImpl implements PayOrderService {
     @Resource
     private BizPayOrderMapper   bizPayOrderMapper;
 
-    @Cache
     @Override
+    @Cacheable(key = "3")
     public BizPayOrder getById(Long id) {
         LogUtil.info(logger, "收到订单查询请求,id={0}", id);
         BizPayOrder order = bizPayOrderMapper.selectByPrimaryKey(id);

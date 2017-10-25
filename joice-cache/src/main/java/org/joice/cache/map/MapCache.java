@@ -11,7 +11,7 @@ import org.joice.cache.Cache;
 import org.joice.cache.config.CacheConfig;
 import org.joice.cache.to.CacheKey;
 import org.joice.cache.to.CacheWrapper;
-import org.joice.cache.util.LogUtil;
+import org.joice.common.util.LogUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,6 +137,7 @@ public class MapCache implements Cache {
         }
     }
 
+    @Override
     public CacheConfig getConfig() {
         return config;
     }

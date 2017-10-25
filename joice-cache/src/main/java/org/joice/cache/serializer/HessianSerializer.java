@@ -10,7 +10,7 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.joice.cache.exception.SerializationException;
-import org.joice.cache.util.LogUtil;
+import org.joice.common.util.LogUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

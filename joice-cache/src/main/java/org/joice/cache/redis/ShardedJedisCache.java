@@ -9,11 +9,12 @@ import java.util.Iterator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joice.cache.Cache;
+import org.joice.cache.config.CacheConfig;
 import org.joice.cache.serializer.HessianSerializer;
 import org.joice.cache.serializer.StringSerializer;
 import org.joice.cache.to.CacheKey;
 import org.joice.cache.to.CacheWrapper;
-import org.joice.cache.util.LogUtil;
+import org.joice.common.util.LogUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,9 @@ public class ShardedJedisCache implements Cache {
 
     private static final Logger                   logger = LoggerFactory.getLogger(ShardedJedisCache.class);
 
+    /** 缓存配置类 */
+    private final CacheConfig                     config;
+
     private final ShardedJedis                    shardedJedis;
 
     private final StringSerializer                stringSerializer;
@@ -36,7 +40,12 @@ public class ShardedJedisCache implements Cache {
     private final HessianSerializer<CacheWrapper> hessianSerializer;
 
     public ShardedJedisCache(ShardedJedis shardedJedis) {
+        this(shardedJedis, new CacheConfig());
+    }
+
+    public ShardedJedisCache(ShardedJedis shardedJedis, CacheConfig config) {
         LogUtil.info(logger, "ShardedJedisCache init...");
+        this.config = config;
         this.shardedJedis = shardedJedis;
         stringSerializer = new StringSerializer();
         hessianSerializer = new HessianSerializer<CacheWrapper>();
@@ -105,6 +114,11 @@ public class ShardedJedisCache implements Cache {
 
     public ShardedJedis getShardedJedis() {
         return shardedJedis;
+    }
+
+    @Override
+    public CacheConfig getConfig() {
+        return config;
     }
 
 }

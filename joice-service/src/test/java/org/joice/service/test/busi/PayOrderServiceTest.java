@@ -29,6 +29,9 @@ public class PayOrderServiceTest extends BaseTest {
         BizPayOrder order = payOrderService.getById(id);
         Assert.assertNotNull(order);
         Assert.assertTrue(order.getId() == id);
+
+        order = payOrderService.getById(id);
+        Assert.assertNotNull(order);
     }
 
 }

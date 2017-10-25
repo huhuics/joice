@@ -8,14 +8,34 @@
                         http://www.springframework.org/schema/context/spring-context-4.0.xsd
                         http://www.springframework.org/schema/aop
                         http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+                        
+    <bean id="shardedJedis" class="redis.clients.jedis.ShardedJedis">
+    	<constructor-arg>
+    		<list>
+    			<bean class="redis.clients.jedis.JedisShardInfo">
+    				<constructor-arg name="host" value="168.33.131.55" />
+    			</bean>
+    		</list>
+    	</constructor-arg>
+    </bean>
+    
+    <bean id="cache" class="org.joice.cache.redis.ShardedJedisCache">
+    	<constructor-arg ref="shardedJedis" />
+    </bean>
+                        
+    <bean id="cacheHandler" class="org.joice.cache.handler.CacheHandler">
+    	<constructor-arg ref="cache" />
+    </bean>
 
-	<bean id="cacheAspect" class="org.joice.cache.aspect.CacheAspect" />
+	<bean id="cacheAspect" class="org.joice.cache.aspect.CacheAspect" >
+		<constructor-arg ref="cacheHandler" />
+	</bean>
 
 	<!-- 配置AOP -->
 	<aop:config proxy-target-class="true">
 		<aop:aspect ref="cacheAspect">
 			<!-- 配置切点表达式 -->
-			<aop:pointcut expression="execution(* org.joice.service.busi.*.*(..)) &amp;&amp; @annotation(org.joice.cache.annotation.Cache)" id="busiPointcut" />
+			<aop:pointcut expression="execution(* org.joice.service.busi.*.*(..)) &amp;&amp; @annotation(org.joice.cache.annotation.Cacheable)" id="busiPointcut" />
 			<aop:around method="around" pointcut-ref="busiPointcut"/>
 		</aop:aspect>
 	</aop:config>

@@ -12,7 +12,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.joice.cache.map.MapCache;
 import org.joice.cache.to.CacheKey;
 import org.joice.cache.to.CacheWrapper;
-import org.joice.cache.util.LogUtil;
+import org.joice.common.util.LogUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

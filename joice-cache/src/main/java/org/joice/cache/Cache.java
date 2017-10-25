@@ -4,6 +4,7 @@
  */
 package org.joice.cache;
 
+import org.joice.cache.config.CacheConfig;
 import org.joice.cache.to.CacheKey;
 import org.joice.cache.to.CacheWrapper;
 
@@ -44,5 +45,10 @@ public interface Cache {
      * 关闭缓存 
      */
     void shutdown();
+
+    /**
+     * 获取缓存配置
+     */
+    CacheConfig getConfig();
 
 }

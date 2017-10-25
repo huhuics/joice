@@ -21,8 +21,8 @@ import org.joice.cache.config.CacheConfig;
 import org.joice.cache.serializer.HessianSerializer;
 import org.joice.cache.serializer.Serializer;
 import org.joice.cache.to.CacheWrapper;
-import org.joice.cache.util.LogUtil;
 import org.joice.cache.util.OSUtil;
+import org.joice.common.util.LogUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
