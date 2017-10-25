@@ -69,7 +69,6 @@ public class ShardedJedisCache implements Cache {
         try {
             byte[] bytes = shardedJedis.get(stringSerializer.serialize(key));
             wrapper = hessianSerializer.deserialize(bytes);
-
         } catch (Exception e) {
             LogUtil.error(e, logger, "查询Redis缓存失败,cacheKey={0}", cacheKey);
         }

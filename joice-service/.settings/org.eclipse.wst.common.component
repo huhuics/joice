@@ -10,6 +10,9 @@
         <dependent-module archiveName="joice-common-0.0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/joice-common/joice-common">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="joice-cache-0.0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/joice-cache/joice-cache">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="joice-service"/>
         <property name="java-output-path" value="/joice-service/target/classes"/>
     </wb-module>

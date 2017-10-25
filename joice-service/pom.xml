@@ -20,6 +20,11 @@
 			<artifactId>joice-facade</artifactId>
 			<version>0.0.1</version>
 		</dependency>
+		<dependency>
+			<groupId>com.joice</groupId>
+			<artifactId>joice-cache</artifactId>
+			<version>0.0.1</version>
+		</dependency>
 
 		<!-- spring核心包 -->
 		<dependency>
