@@ -4,12 +4,15 @@
  */
 package org.joice.cache.handler;
 
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.joice.cache.Cache;
 import org.joice.cache.annotation.Cacheable;
+import org.joice.cache.ke.gene.HashCodeKeyGenerator;
+import org.joice.cache.ke.gene.KeyGenerator;
 import org.joice.cache.to.CacheKey;
 import org.joice.cache.to.CacheWrapper;
+import org.joice.cache.util.TargetDetailUtil;
 import org.joice.common.util.AssertUtil;
 import org.joice.common.util.LogUtil;
 import org.slf4j.Logger;
@@ -22,15 +25,18 @@ import org.slf4j.LoggerFactory;
  */
 public class CacheHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(CacheHandler.class);
+    private static final Logger         logger = LoggerFactory.getLogger(CacheHandler.class);
 
-    private final Cache         cache;
+    private final Cache                 cache;
 
-    private final String        nameSpace;
+    private final String                nameSpace;
+
+    private final KeyGenerator<Integer> keyGenerator;
 
     public CacheHandler(Cache cache) {
         this.cache = cache;
         nameSpace = cache.getConfig().getNameSpace();
+        keyGenerator = new HashCodeKeyGenerator();
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -45,28 +51,32 @@ public class CacheHandler {
         boolean sync = cacheable.sync();
         AssertUtil.assertTrue(expireTime >= 0, "超时时间不能为负");
 
-        MethodSignature signature = (MethodSignature) jp.getSignature();
-        Class returnType = signature.getReturnType();
+        Class returnType = TargetDetailUtil.getReturnType(jp);
 
         //组装CacheKey
+        if (StringUtils.isBlank(key)) {
+            key = (keyGenerator.getKey(jp.getTarget(), TargetDetailUtil.getMethod(jp), jp.getArgs())).toString();
+        }
         CacheKey cacheKey = new CacheKey(nameSpace, key);
 
         //查询缓存
         CacheWrapper cacheWrapper = cache.get(cacheKey);
 
-        if (cacheWrapper != null) { //缓存中有
+        if (cacheWrapper != null) { //缓存命中
             Object obj = cacheWrapper.getObj();
             if (returnType.isAssignableFrom(obj.getClass())) {
                 return obj;
             }
         }
 
-        //缓存中没有或者缓存的对象与实际返回值不一样
+        //缓存未命中或者缓存的对象与实际返回值不一样
         proceedRet = jp.proceed();
 
         //放入缓存
-        CacheWrapper newWrapper = new CacheWrapper(proceedRet, expireTime);
-        cache.set(cacheKey, newWrapper);
+        if (proceedRet != null) {
+            CacheWrapper newWrapper = new CacheWrapper(proceedRet, expireTime);
+            cache.set(cacheKey, newWrapper);
+        }
 
         return proceedRet;
     }

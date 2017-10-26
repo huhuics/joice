@@ -28,7 +28,7 @@ public class PayOrderServiceImpl implements PayOrderService {
     private BizPayOrderMapper   bizPayOrderMapper;
 
     @Override
-    @Cacheable(key = "3")
+    @Cacheable
     public BizPayOrder getById(Long id) {
         LogUtil.info(logger, "收到订单查询请求,id={0}", id);
         BizPayOrder order = bizPayOrderMapper.selectByPrimaryKey(id);

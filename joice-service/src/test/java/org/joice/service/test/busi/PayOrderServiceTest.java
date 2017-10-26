@@ -24,14 +24,12 @@ public class PayOrderServiceTest extends BaseTest {
 
     @Test
     public void testGetById() {
-        Long id = 3L;
+        Long id = 4L;
         Assert.assertNotNull(payOrderService);
         BizPayOrder order = payOrderService.getById(id);
         Assert.assertNotNull(order);
         Assert.assertTrue(order.getId() == id);
 
-        order = payOrderService.getById(id);
-        Assert.assertNotNull(order);
     }
 
 }

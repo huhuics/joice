@@ -7,9 +7,9 @@ package org.joice.cache.aspect;
 import java.lang.reflect.Method;
 
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.joice.cache.annotation.Cacheable;
 import org.joice.cache.handler.CacheHandler;
+import org.joice.cache.util.TargetDetailUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,7 @@ public class CacheAspect {
     public Object around(ProceedingJoinPoint jp) throws Throwable {
 
         //判断是否存在@Cache注解
-        Method method = ((MethodSignature) jp.getSignature()).getMethod();
+        Method method = TargetDetailUtil.getMethod(jp);
         boolean cacheAnnoPresent = method.isAnnotationPresent(Cacheable.class);
 
         if (cacheAnnoPresent) {
