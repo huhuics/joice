@@ -10,6 +10,7 @@ import org.joice.cache.Cache;
 import org.joice.cache.annotation.Cacheable;
 import org.joice.cache.ke.gene.HashCodeKeyGenerator;
 import org.joice.cache.ke.gene.KeyGenerator;
+import org.joice.cache.ke.gene.SpringELParser;
 import org.joice.cache.to.CacheKey;
 import org.joice.cache.to.CacheWrapper;
 import org.joice.cache.util.TargetDetailUtil;
@@ -33,10 +34,13 @@ public class CacheHandler {
 
     private final KeyGenerator<Integer> keyGenerator;
 
+    private final SpringELParser        elParser;
+
     public CacheHandler(Cache cache) {
         this.cache = cache;
         nameSpace = cache.getConfig().getNameSpace();
         keyGenerator = new HashCodeKeyGenerator();
+        elParser = new SpringELParser();
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -49,13 +53,22 @@ public class CacheHandler {
         String key = cacheable.key();
         int expireTime = cacheable.expireTime();
         boolean sync = cacheable.sync();
+        String condition = cacheable.condition();
+        Object[] args = jp.getArgs();
         AssertUtil.assertTrue(expireTime >= 0, "超时时间不能为负");
+
+        //如果不满足缓存条件直接返回
+        if (!isCacheable(condition, args)) {
+            return jp.proceed();
+        }
 
         Class returnType = TargetDetailUtil.getReturnType(jp);
 
         //组装CacheKey
         if (StringUtils.isBlank(key)) {
-            key = (keyGenerator.getKey(jp.getTarget(), TargetDetailUtil.getMethod(jp), jp.getArgs())).toString();
+            key = (keyGenerator.getKey(jp.getTarget(), TargetDetailUtil.getMethod(jp), args)).toString();
+        } else {
+            key = getKeySpELValue(key, args);
         }
         CacheKey cacheKey = new CacheKey(nameSpace, key);
 
@@ -80,4 +93,13 @@ public class CacheHandler {
 
         return proceedRet;
     }
+
+    private boolean isCacheable(String conditionSpEl, Object[] args) {
+        return elParser.getELBooleanValue(conditionSpEl, args);
+    }
+
+    private String getKeySpELValue(String keySpEl, Object[] args) {
+        return elParser.getELStringValue(keySpEl, args);
+    }
+
 }
