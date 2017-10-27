@@ -30,11 +30,36 @@
 9. 日志：logback打印日志，同时基于时间和文件大小分割日志文件。    
 
 10. 缓存    
-    + 本地缓存：使用`ConcurrentHashMap`实现，支持缓存持久化、缓存失效策略等等，使用方式可参考 [MapCache测试用例](https://github.com/huhuics/joice/blob/master/joice-cache/src/test/java/org/joice/cache/test/MapCacheTest.java)    
-    + Redis缓存
+    + 本地缓存：基于`ConcurrentHashMap`实现，支持缓存持久化、缓存失效策略等等，使用方式可参考 [MapCache测试用例](https://github.com/huhuics/joice/blob/master/joice-cache/src/test/java/org/joice/cache/test/MapCacheTest.java)    
+    + Redis缓存：基于`ShardedJedis`实现    
+    
+    开发这个缓存中间件的初衷是为了减少缓存操作的代码与业务逻辑解耦，借鉴`Spring Cache`的思想使用`AOP + Annotation`等技术实现缓存与业务逻辑的解耦，在需要对查询结果进行缓存的地方，使用`org.joice.cache.annotation.Cacheable`标记：    
+    
+```java
+    @Cacheable
+    public BizPayOrder getById(Long id) {
+        LogUtil.info(logger, "收到订单查询请求,id={0}", id);
+        BizPayOrder order = bizPayOrderMapper.selectByPrimaryKey(id);
+        LogUtil.info(logger, "订单查询结果,order={0}", order);
+        return order;
+    }
 
+    @Cacheable(key = "'payOrderService_getById_'+#args[0].id", condition = "#args[0].id>3")
+    public BizPayOrder getById(BizPayOrder order) {
+        Long id = order.getId();
+        BizPayOrder ret = bizPayOrderMapper.selectByPrimaryKey(id);
+        LogUtil.info(logger, "订单查询结果,order={0}", ret);
+        return ret;
+    }
+```    
 
+如果不自定义key，则该缓存使用自动生成的key。生成的规则是将类名、方法名、参数值一起计算其hashcode，这也意味着如果使用默认生成的key将不支持删除。    
+此外，key支持Spring EL表达式，condition也支持。    
+为了尽量减少内存使用和对网络带宽的压力，`joice-cache`实现了基于`Hessian`的序列化工具，开发者也可以通过实现`org.joice.cache.serializer.Serializer<T>`接口自行扩展    
 # 启动    
-[joice-service] --> Run as --> Maven build... --> tomcat7:run
+先在MySQL中导入`joice.sql`文件，然后再在`joice-service`的`resources`-->`config`修改成你自己的配置文件。    
+本项目需要依赖`Zookeeper`,`ActiveMQ`    
+
+> [joice-service] --> Run as --> Maven build... --> tomcat7:run
 
 ### 代码在逐步完善中
