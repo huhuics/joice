@@ -20,4 +20,11 @@ public interface PayOrderService {
      */
     BizPayOrder getById(Long id);
 
+    /**
+     * 查询订单对象
+     * @param order
+     * @return
+     */
+    BizPayOrder getById(BizPayOrder order);
+
 }

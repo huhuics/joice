@@ -32,4 +32,15 @@ public class PayOrderServiceTest extends BaseTest {
 
     }
 
+    @Test
+    public void testSpEL() {
+        //@Cacheable(key = "'payOrderService_getById_'+#args[0].id", condition = "#args[0]>3")
+        BizPayOrder queryCon = new BizPayOrder();
+        queryCon.setId(3L);
+        payOrderService.getById(queryCon);//不会放入缓存
+
+        queryCon.setId(4L);
+        payOrderService.getById(queryCon);//会放入缓存
+    }
+
 }

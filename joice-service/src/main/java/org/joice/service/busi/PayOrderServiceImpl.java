@@ -36,4 +36,13 @@ public class PayOrderServiceImpl implements PayOrderService {
         return order;
     }
 
+    @Override
+    @Cacheable(key = "'payOrderService_getById_'+#args[0].id", condition = "#args[0].id>3")
+    public BizPayOrder getById(BizPayOrder order) {
+        Long id = order.getId();
+        BizPayOrder ret = bizPayOrderMapper.selectByPrimaryKey(id);
+        LogUtil.info(logger, "订单查询结果,order={0}", ret);
+        return ret;
+    }
+
 }

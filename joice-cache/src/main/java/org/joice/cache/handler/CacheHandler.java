@@ -45,17 +45,16 @@ public class CacheHandler {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public Object handleCacheable(Cacheable cacheable, ProceedingJoinPoint jp) throws Throwable {
-        LogUtil.info(logger, "进入CacheHandler");
-
         Object proceedRet = null;
 
         //获取注解内参数
         String key = cacheable.key();
         int expireTime = cacheable.expireTime();
-        boolean sync = cacheable.sync();
         String condition = cacheable.condition();
         Object[] args = jp.getArgs();
         AssertUtil.assertTrue(expireTime >= 0, "超时时间不能为负");
+
+        LogUtil.info(logger, "key={0},expireTime={1},condition={2},args={3}", key, expireTime, condition, args);
 
         //如果不满足缓存条件直接返回
         if (!isCacheable(condition, args)) {
