@@ -23,20 +23,33 @@
     	<constructor-arg ref="shardedJedis" />
     </bean>
                         
-    <bean id="cacheHandler" class="org.joice.cache.handler.CacheHandler">
+    <bean id="defaultHandler" class="org.joice.cache.handler.DefaultHandler">
     	<constructor-arg ref="cache" />
     </bean>
 
-	<bean id="cacheAspect" class="org.joice.cache.aspect.CacheAspect" >
-		<constructor-arg ref="cacheHandler" />
+	<!-- 拦截@Cacheable注解 -->
+	<bean id="cacheableAspect" class="org.joice.cache.aspect.CacheableAspect" >
+		<constructor-arg ref="defaultHandler" />
+	</bean>
+	<!-- 拦截@CacheDel注解 -->
+	<bean id="cacheDelAspect" class="org.joice.cache.aspect.CacheDelAspect" >
+		<constructor-arg ref="defaultHandler" />
 	</bean>
 
 	<!-- 配置AOP -->
 	<aop:config proxy-target-class="true">
-		<aop:aspect ref="cacheAspect">
+		<aop:aspect ref="cacheableAspect">
 			<!-- 配置切点表达式 -->
-			<aop:pointcut expression="execution(* org.joice.service.busi.*.*(..)) &amp;&amp; @annotation(org.joice.cache.annotation.Cacheable)" id="busiPointcut" />
-			<aop:around method="around" pointcut-ref="busiPointcut"/>
+			<aop:pointcut expression="execution(* org.joice.service.busi.*.*(..)) &amp;&amp; @annotation(org.joice.cache.annotation.Cacheable)" id="busiCacheablePointcut" />
+			<aop:around method="around" pointcut-ref="busiCacheablePointcut"/>
+		</aop:aspect>
+	</aop:config>
+	
+	<aop:config proxy-target-class="true">
+		<aop:aspect ref="cacheDelAspect">
+			<!-- 配置切点表达式 -->
+			<aop:pointcut expression="execution(* org.joice.service.busi.*.*(..)) &amp;&amp; @annotation(org.joice.cache.annotation.CacheDel)" id="busiCacheDelPointcut" />
+			<aop:around method="around" pointcut-ref="busiCacheDelPointcut"/>
 		</aop:aspect>
 	</aop:config>
 

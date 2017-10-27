@@ -6,6 +6,8 @@ package org.joice.service.busi;
 
 import javax.annotation.Resource;
 
+import org.joice.cache.annotation.CacheDel;
+import org.joice.cache.annotation.CacheDelItem;
 import org.joice.cache.annotation.Cacheable;
 import org.joice.common.dao.BizPayOrderMapper;
 import org.joice.common.dao.domain.BizPayOrder;
@@ -45,4 +47,10 @@ public class PayOrderServiceImpl implements PayOrderService {
         return ret;
     }
 
+    @Override
+    @CacheDel(items = { @CacheDelItem(key = "'payOrderService_getById_'+#args[0].id") }, condition = "#retVal == true")
+    public boolean updateOrder(BizPayOrder order) {
+        int ret = bizPayOrderMapper.updateByPrimaryKey(order);
+        return ret == 1 ? true : false;
+    }
 }

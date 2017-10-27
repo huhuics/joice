@@ -4,9 +4,13 @@
  */
 package org.joice.cache.handler;
 
+import java.lang.reflect.Method;
+
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.joice.cache.Cache;
+import org.joice.cache.annotation.CacheDel;
+import org.joice.cache.annotation.CacheDelItem;
 import org.joice.cache.annotation.Cacheable;
 import org.joice.cache.ke.gene.HashCodeKeyGenerator;
 import org.joice.cache.ke.gene.KeyGenerator;
@@ -22,11 +26,11 @@ import org.slf4j.LoggerFactory;
 /**
  * 缓存处理类
  * @author HuHui
- * @version $Id: CacheHandler.java, v 0.1 2017年10月25日 下午8:39:00 HuHui Exp $
+ * @version $Id: CacheableHandler.java, v 0.1 2017年10月25日 下午8:39:00 HuHui Exp $
  */
-public class CacheHandler {
+public class DefaultHandler implements Handler {
 
-    private static final Logger         logger = LoggerFactory.getLogger(CacheHandler.class);
+    private static final Logger         logger = LoggerFactory.getLogger(DefaultHandler.class);
 
     private final Cache                 cache;
 
@@ -36,16 +40,20 @@ public class CacheHandler {
 
     private final SpringELParser        elParser;
 
-    public CacheHandler(Cache cache) {
+    public DefaultHandler(Cache cache) {
         this.cache = cache;
         nameSpace = cache.getConfig().getNameSpace();
         keyGenerator = new HashCodeKeyGenerator();
         elParser = new SpringELParser();
     }
 
+    @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public Object handleCacheable(Cacheable cacheable, ProceedingJoinPoint jp) throws Throwable {
+    public Object handleCacheable(ProceedingJoinPoint jp) throws Throwable {
         Object proceedRet = null;
+
+        Method method = TargetDetailUtil.getMethod(jp);
+        Cacheable cacheable = method.getAnnotation(Cacheable.class);
 
         //获取注解内参数
         String key = cacheable.key();
@@ -57,7 +65,7 @@ public class CacheHandler {
         LogUtil.info(logger, "key={0},expireTime={1},condition={2},args={3}", key, expireTime, condition, args);
 
         //如果不满足缓存条件直接返回
-        if (!isCacheable(condition, args)) {
+        if (StringUtils.isNotBlank(condition) && !isCacheable(condition, args)) {
             return jp.proceed();
         }
 
@@ -65,7 +73,7 @@ public class CacheHandler {
 
         //组装CacheKey
         if (StringUtils.isBlank(key)) {
-            key = (keyGenerator.getKey(jp.getTarget(), TargetDetailUtil.getMethod(jp), args)).toString();
+            key = (keyGenerator.getKey(jp.getTarget(), method, args)).toString();
         } else {
             key = getKeySpELValue(key, args);
         }
@@ -93,12 +101,50 @@ public class CacheHandler {
         return proceedRet;
     }
 
+    /**
+     * 缓存删除的逻辑:
+     * 先操作数据库,成功以后再删除缓存
+     */
+    @Override
+    public Object handleCacheDel(ProceedingJoinPoint jp) throws Throwable {
+        Object proceedRet = jp.proceed();
+
+        Method method = TargetDetailUtil.getMethod(jp);
+        CacheDel cacheDel = method.getAnnotation(CacheDel.class);
+        String condition = cacheDel.condition();
+
+        if (StringUtils.isNotBlank(condition) && !isDel(condition, proceedRet)) {//不满足缓存删除条件
+            return proceedRet;
+        }
+
+        try {
+            CacheDelItem[] items = cacheDel.items();
+            for (CacheDelItem item : items) {
+                String keySpEL = item.key();
+                if (StringUtils.isBlank(keySpEL)) {
+                    continue;
+                }
+                String key = getKeySpELValue(keySpEL, jp.getArgs());
+                CacheKey cacheKey = new CacheKey(nameSpace, key);
+                cache.delete(cacheKey);
+            }
+        } catch (Exception e) {
+            logger.error("删除缓存出错", e);
+        }
+
+        return proceedRet;
+    }
+
     private boolean isCacheable(String conditionSpEl, Object[] args) {
         return elParser.getELBooleanValue(conditionSpEl, args);
     }
 
     private String getKeySpELValue(String keySpEl, Object[] args) {
         return elParser.getELStringValue(keySpEl, args);
+    }
+
+    private boolean isDel(String conditionSpE, Object retVal) {
+        return elParser.getELRetVal(conditionSpE, null, retVal);
     }
 
 }

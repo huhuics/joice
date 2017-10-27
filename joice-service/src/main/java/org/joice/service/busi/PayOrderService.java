@@ -27,4 +27,9 @@ public interface PayOrderService {
      */
     BizPayOrder getById(BizPayOrder order);
 
+    /**
+     * 修改订单对象
+     */
+    boolean updateOrder(BizPayOrder order);
+
 }

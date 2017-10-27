@@ -28,8 +28,10 @@ public class SpringELParser {
 
     private static final String                         ARGS     = "args";
 
+    private static final String                         RET_VAL  = "retVal";
+
     @SuppressWarnings("unchecked")
-    public <T> T getELValue(String keySpEL, Object[] args, Class<T> classType) {
+    public <T> T getELValue(String keySpEL, Object[] args, Class<T> classType, Object retVal, boolean isRet) {
         if (classType == String.class) {
             if (keySpEL.indexOf("#") == -1 && keySpEL.indexOf("'") == -1) {
                 return (T) keySpEL; //如果不是EL表达式则返回原字符串
@@ -39,6 +41,9 @@ public class SpringELParser {
         StandardEvaluationContext context = new StandardEvaluationContext();
 
         context.setVariable(ARGS, args);
+        if (isRet) {
+            context.setVariable(RET_VAL, retVal);
+        }
 
         Expression expression = expCache.get(keySpEL);
 
@@ -52,13 +57,15 @@ public class SpringELParser {
     }
 
     public String getELStringValue(String keySpEL, Object[] args) {
-
-        return getELValue(keySpEL, args, String.class);
-
+        return getELValue(keySpEL, args, String.class, null, false);
     }
 
     public Boolean getELBooleanValue(String keySpEL, Object[] args) {
-        return getELValue(keySpEL, args, Boolean.class);
+        return getELValue(keySpEL, args, Boolean.class, null, false);
+    }
+
+    public Boolean getELRetVal(String keySpEL, Object[] args, Object retVal) {
+        return getELValue(keySpEL, args, Boolean.class, retVal, true);
     }
 
 }

@@ -34,7 +34,7 @@ public class PayOrderServiceTest extends BaseTest {
 
     @Test
     public void testSpEL() {
-        //@Cacheable(key = "'payOrderService_getById_'+#args[0].id", condition = "#args[0]>3")
+        //测试的Spring EL表达式：@Cacheable(key = "'payOrderService_getById_'+#args[0].id", condition = "#args[0]>3")
         BizPayOrder queryCon = new BizPayOrder();
         queryCon.setId(3L);
         payOrderService.getById(queryCon);//不会放入缓存
@@ -43,4 +43,20 @@ public class PayOrderServiceTest extends BaseTest {
         payOrderService.getById(queryCon);//会放入缓存
     }
 
+    @Test
+    public void testUpdateOrder() {
+        BizPayOrder queryCon = new BizPayOrder();
+        queryCon.setId(4L);
+        BizPayOrder ret = payOrderService.getById(queryCon);//会放入缓存
+
+        //修改对象
+        ret.setGoodsDetail("mate10 pro 128g");
+        payOrderService.updateOrder(ret); //修改数据库并删除缓存
+
+        //设置一个不存在的id
+        queryCon.setId(-1L);
+        boolean updateRet = payOrderService.updateOrder(queryCon);//updateRet==false,故不会删除缓存
+        Assert.assertFalse(updateRet);
+
+    }
 }

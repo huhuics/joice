@@ -49,4 +49,39 @@ public class SpringELParserTest {
         Boolean b2 = elParser.getELBooleanValue(keySpEL2, obj);
         Assert.assertFalse(b2);
     }
+
+    @Test
+    public void testGetELValueFromRet() {
+        Department detp = new Department(3L, "华山派");
+        String keySpEL = "#retVal == true";
+        Object[] obj = { detp };
+
+        Boolean ret = elParser.getELRetVal(keySpEL, obj, Boolean.TRUE);
+
+        Assert.assertTrue(ret);
+
+        ret = elParser.getELRetVal(keySpEL, obj, Boolean.FALSE);
+        Assert.assertFalse(ret);
+
+        keySpEL = "#retVal == 1";
+        ret = elParser.getELRetVal(keySpEL, obj, 1);
+        Assert.assertTrue(ret);
+
+        ret = elParser.getELRetVal(keySpEL, obj, 2);
+        Assert.assertFalse(ret);
+    }
+
+    @Test
+    public void testNullEL() {
+        String keySpEL = "#retVal == 1";
+        Boolean ret1 = elParser.getELBooleanValue(keySpEL, null);
+        Assert.assertFalse(ret1);
+
+        Boolean ret2 = elParser.getELRetVal(keySpEL, null, null);
+        Assert.assertFalse(ret2);
+
+        String ret3 = elParser.getELStringValue(keySpEL, null);
+        Assert.assertTrue(StringUtils.equals(ret3, "false"));
+    }
+
 }
