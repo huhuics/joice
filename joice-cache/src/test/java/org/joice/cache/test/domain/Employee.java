@@ -4,17 +4,17 @@
  */
 package org.joice.cache.test.domain;
 
-import java.io.Serializable;
+import org.joice.cache.to.BaseTO;
 
 /**
  * 测试对象
  * @author HuHui
  * @version $Id: Employee.java, v 0.1 2017年10月10日 下午5:00:37 HuHui Exp $
  */
-public class Employee implements Serializable {
+public class Employee extends BaseTO {
 
     /**  */
-    private static final long serialVersionUID = 4960951517707491394L;
+    private static final long serialVersionUID = -4620016204472694934L;
 
     private long              id;
 
@@ -45,6 +45,14 @@ public class Employee implements Serializable {
     }
 
     public Department getDept() {
+        return dept;
+    }
+
+    public Department getDept(Long id) {
+        return dept;
+    }
+
+    public Department getDept(Department dep) {
         return dept;
     }
 

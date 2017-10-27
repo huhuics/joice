@@ -18,7 +18,7 @@ public class HashCodeKeyGenerator implements KeyGenerator<Integer> {
     @Override
     public Integer getKey(Object target, Method method, Object... params) {
         KeyWrapper keyWrapper = new KeyWrapper(target.getClass().getName(), method.getName(), params);
-        int code = HashCodeBuilder.reflectionHashCode(keyWrapper, true);
+        int code = HashCodeBuilder.reflectionHashCode(keyWrapper.toString(), true);
         return code;
     }
 

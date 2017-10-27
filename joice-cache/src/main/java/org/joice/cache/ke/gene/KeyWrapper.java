@@ -4,21 +4,26 @@
  */
 package org.joice.cache.ke.gene;
 
+import org.joice.cache.to.BaseTO;
+
 /**
  * key封装类
  * @author HuHui
  * @version $Id: KeyWrapper.java, v 0.1 2017年10月26日 下午3:28:24 HuHui Exp $
  */
-public class KeyWrapper {
+public class KeyWrapper extends BaseTO {
+
+    /**  */
+    private static final long serialVersionUID = -230289853255492429L;
 
     /** 目标类名 */
-    private String targetName;
+    private String            targetName;
 
     /** 方法名 */
-    private String methodName;
+    private String            methodName;
 
     /** 方法参数 */
-    private Object params[];
+    private Object            params[];
 
     public KeyWrapper() {
     }

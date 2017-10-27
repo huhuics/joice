@@ -53,7 +53,7 @@
     }
 ```    
 
-+ 如果不自定义key，则该缓存使用自动生成的key。生成的规则是将类名、方法名、参数值一起计算其hashcode，这也意味着如果使用默认生成的key将不支持删除。    
++ 如果不自定义key，则该缓存使用自动生成的key。生成的规则是将类名、方法名、参数值一起计算其hashcode，这也意味着如果使用默认生成的key将不支持删除。 **注意：** 如果是使用自动生成key，切点处的方法参数如果不是基本类型而是对象，则该对象必须继承`org.joice.cache.to.BaseTO`，这样只要参数值每次一致，生成的hashcode就是相同的。    
 + 此外，key支持Spring EL表达式，condition也支持。    
 + 为了尽量减少内存使用和对网络带宽的压力，`joice-cache`实现了基于`Hessian`的序列化工具，开发者也可以通过实现`org.joice.cache.serializer.Serializer<T>`接口自行扩展    
 
