@@ -34,7 +34,8 @@
     + Redis缓存：基于`ShardedJedis`实现，实现类在[ShardedJedisCache](https://github.com/huhuics/joice/blob/master/joice-cache/src/main/java/org/joice/cache/redis/ShardedJedisCache.java)    
     
     开发这个缓存中间件的初衷是为了减少缓存操作的代码与业务逻辑解耦，借鉴`Spring Cache`的思想使用`AOP + Annotation`等技术实现缓存与业务逻辑的解耦，在需要对查询结果进行缓存的地方，使用`org.joice.cache.annotation.Cacheable`标记：    
-    
+
+### 数据放入缓存
 ```java
     @Cacheable
     public BizPayOrder getById(Long id) {
@@ -55,6 +56,19 @@
 + 如果不自定义key，则该缓存使用自动生成的key。生成的规则是将类名、方法名、参数值一起计算其hashcode，这也意味着如果使用默认生成的key将不支持删除。    
 + 此外，key支持Spring EL表达式，condition也支持。    
 + 为了尽量减少内存使用和对网络带宽的压力，`joice-cache`实现了基于`Hessian`的序列化工具，开发者也可以通过实现`org.joice.cache.serializer.Serializer<T>`接口自行扩展    
+
+### 修改缓存    
+```java
+    @CacheDel(items = { @CacheDelItem(key = "'payOrderService_getById_'+#args[0].id") }, condition = "#retVal == true")
+    public boolean updateOrder(BizPayOrder order) {
+        int ret = bizPayOrderMapper.updateByPrimaryKey(order);
+        return ret == 1 ? true : false;
+    }
+```    
++ 当需要修改缓存时，为避免缓存与数据库双写不一致，采取的策略是先修改数据库，成功以后再删除缓存。[为什么？](https://github.com/huhuics/Accumulate/blob/master/%E6%9E%B6%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95/%E7%BC%93%E5%AD%98%E6%9B%B4%E6%96%B0%E5%A5%97%E8%B7%AF.md)    
++ 实际业务场景中，修改一条数据库数据可能涉及删除多条缓存数据，故`@CacheDel`注解中需要设置`@CacheDelItem`数组，一个`@CacheDelItem`表示一条需要删除缓存的数据    
++ 当修改数据库成功以后才能删除缓存，`@CacheDel`可以通过设置`condition`来控制，`condition`支持Spring EL表达式    
+
 # 启动    
 先在MySQL中导入`joice.sql`文件，然后再在`joice-service`的`resources`-->`config`修改成你自己的配置文件。    
 本项目需要依赖`Zookeeper`,`ActiveMQ`    
