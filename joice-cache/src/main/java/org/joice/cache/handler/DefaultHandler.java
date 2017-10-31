@@ -32,7 +32,7 @@ public class DefaultHandler implements Handler {
 
     private static final Logger         logger = LoggerFactory.getLogger(DefaultHandler.class);
 
-    private final Cache                 cache;
+    private Cache                       cache;
 
     private final String                nameSpace;
 
@@ -48,9 +48,7 @@ public class DefaultHandler implements Handler {
     }
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Object handleCacheable(ProceedingJoinPoint jp) throws Throwable {
-        Object proceedRet = null;
 
         Method method = TargetDetailUtil.getMethod(jp);
         Cacheable cacheable = method.getAnnotation(Cacheable.class);
@@ -59,6 +57,7 @@ public class DefaultHandler implements Handler {
         String key = cacheable.key();
         int expireTime = cacheable.expireTime();
         String condition = cacheable.condition();
+        boolean sync = cacheable.sync();
         Object[] args = jp.getArgs();
         AssertUtil.assertTrue(expireTime >= 0, "超时时间不能为负");
 
@@ -69,8 +68,6 @@ public class DefaultHandler implements Handler {
             return jp.proceed();
         }
 
-        Class returnType = TargetDetailUtil.getReturnType(jp);
-
         //组装CacheKey
         if (StringUtils.isBlank(key)) {
             key = (keyGenerator.getKey(jp.getTarget(), method, args)).toString();
@@ -79,26 +76,39 @@ public class DefaultHandler implements Handler {
         }
         CacheKey cacheKey = new CacheKey(nameSpace, key);
 
-        //查询缓存
+        return getValue(jp, cacheKey, sync, expireTime);
+
+    }
+
+    private Object getValue(ProceedingJoinPoint jp, CacheKey cacheKey, boolean sync, int expireTime) throws Throwable {
         CacheWrapper cacheWrapper = cache.get(cacheKey);
+        if (cacheWrapper != null) {//缓存命中
+            return cacheWrapper.getObj();
+        }
 
-        if (cacheWrapper != null) { //缓存命中
-            Object obj = cacheWrapper.getObj();
-            if (returnType.isAssignableFrom(obj.getClass())) {
-                return obj;
+        Object proceedRet = null;
+        if (sync) {
+            if (cache.setMutex(cacheKey) == 1L) {
+                proceedRet = jp.proceed();
+                //放入缓存
+                if (proceedRet != null) {
+                    CacheWrapper newWrapper = new CacheWrapper(proceedRet, expireTime);
+                    cache.set(cacheKey, newWrapper);
+                }
+                return proceedRet;
+            } else {
+                Thread.sleep(50);
+                return getValue(jp, cacheKey, sync, expireTime);
             }
+        } else {
+            proceedRet = jp.proceed();
+            //放入缓存
+            if (proceedRet != null) {
+                CacheWrapper newWrapper = new CacheWrapper(proceedRet, expireTime);
+                cache.set(cacheKey, newWrapper);
+            }
+            return proceedRet;
         }
-
-        //缓存未命中或者缓存的对象与实际返回值不一样
-        proceedRet = jp.proceed();
-
-        //放入缓存
-        if (proceedRet != null) {
-            CacheWrapper newWrapper = new CacheWrapper(proceedRet, expireTime);
-            cache.set(cacheKey, newWrapper);
-        }
-
-        return proceedRet;
     }
 
     /**

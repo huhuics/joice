@@ -142,4 +142,9 @@ public class MapCache implements Cache {
         return config;
     }
 
+    @Override
+    public Long setMutex(CacheKey cacheKey) {
+        throw new UnsupportedOperationException("Map缓存不支持此方法");
+    }
+
 }

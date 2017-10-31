@@ -51,4 +51,9 @@ public interface Cache {
      */
     CacheConfig getConfig();
 
+    /**
+     * 设置Mutex,Map类型缓存不支持此方法,Redis支持
+     */
+    Long setMutex(CacheKey cacheKey);
+
 }

@@ -28,7 +28,7 @@ import redis.clients.jedis.ShardedJedis;
  */
 public class ShardedJedisCache implements Cache {
 
-    private static final Logger                   logger = LoggerFactory.getLogger(ShardedJedisCache.class);
+    private static final Logger                   logger      = LoggerFactory.getLogger(ShardedJedisCache.class);
 
     /** 缓存配置类 */
     private final CacheConfig                     config;
@@ -38,6 +38,11 @@ public class ShardedJedisCache implements Cache {
     private final StringSerializer                stringSerializer;
 
     private final HessianSerializer<CacheWrapper> hessianSerializer;
+
+    /** mutex过期时间,单位：秒 */
+    private static final int                      EXPIRE_TIME = 20;
+
+    private static final String                   mutex       = "mutex";
 
     public ShardedJedisCache(ShardedJedis shardedJedis) {
         this(shardedJedis, new CacheConfig());
@@ -121,4 +126,15 @@ public class ShardedJedisCache implements Cache {
         return config;
     }
 
+    @Override
+    public Long setMutex(CacheKey cacheKey) {
+        String key;
+        if (cacheKey == null || StringUtils.isEmpty(key = cacheKey.getKey())) {
+            return 0L;
+        }
+        Long ret = shardedJedis.setnx(stringSerializer.serialize(key), stringSerializer.serialize(mutex));
+        shardedJedis.expire(stringSerializer.serialize(key), EXPIRE_TIME);
+
+        return ret;
+    }
 }
