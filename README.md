@@ -81,7 +81,26 @@
 
 #### 缓存被“击穿”问题    
 + **概念：** 缓存在某个时间点过期，恰好在这个时间点对这个key有大量的并发请求过来，这些请求发现缓存过期一般都会从数据库加载数据并回设缓存，这个时候大并发的请求可能会瞬间把后端数据库压垮    
-+ **如何解决：** 比较常用的做法是使用mutex。简单来说就是当缓存失效时，不是立即去lodad DB，而是先使用缓存工具的某些带成功操作返回值的操作（比如Redis的SETNX命令）去set一个mutex key，当操作返回成功时，再进行load DB的操作并回设缓存；否则就重试get缓存的方法    
++ **如何解决：** 比较常用的做法是使用mutex。简单来说就是当缓存失效时，不是立即去lodad DB，而是先使用缓存工具的某些带成功操作返回值的操作（比如Redis的SETNX命令）去set一个mutex key，当操作返回成功时，再进行load DB的操作并回设缓存；否则就重试get缓存的方法，算法伪代码如下：    
+
+```java
+public String get(key) {
+      String value = redis.get(key);
+      if (value == null) { //缓存值过期
+          //设置超时时间，防止del操作失败的时候，下次缓存过期一直不能load db
+          if (redis.setnx(key_mutex, 1, 3 * 60) == 1) {  //代表设置成功
+               value = db.get(key);
+                      redis.set(key, value, expire_secs);
+                      redis.del(key_mutex);
+              } else {  //这个时候代表同时候的其他线程已经load db并回设到缓存了，这时候重试获取缓存值即可
+                      sleep(50);
+                      get(key);  //重试
+              }
+          } else {
+              return value;      
+          }
+  }
+````
 
 # 三. 启动    
 先在MySQL中导入`joice.sql`文件，然后再在`joice-service`的`resources`-->`config`修改成你自己的配置文件。    
