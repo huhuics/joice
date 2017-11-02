@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultHandler implements Handler {
 
-    private static final Logger         logger = LoggerFactory.getLogger(DefaultHandler.class);
+    private static final Logger         logger       = LoggerFactory.getLogger(DefaultHandler.class);
 
     private Cache                       cache;
 
@@ -39,6 +39,8 @@ public class DefaultHandler implements Handler {
     private final KeyGenerator<Integer> keyGenerator;
 
     private final SpringELParser        elParser;
+
+    private static final String         MUTEX_PREFIX = "mutex_temp_";
 
     public DefaultHandler(Cache cache) {
         this.cache = cache;
@@ -61,7 +63,7 @@ public class DefaultHandler implements Handler {
         Object[] args = jp.getArgs();
         AssertUtil.assertTrue(expireTime >= 0, "超时时间不能为负");
 
-        LogUtil.info(logger, "key={0},expireTime={1},condition={2},args={3}", key, expireTime, condition, args);
+        LogUtil.info(logger, "key={0},expireTime={1},condition={2},sync={3},args={4}", key, expireTime, condition, sync, args);
 
         //如果不满足缓存条件直接返回
         if (StringUtils.isNotBlank(condition) && !isCacheable(condition, args)) {
@@ -88,12 +90,14 @@ public class DefaultHandler implements Handler {
 
         Object proceedRet = null;
         if (sync) {
-            if (cache.setMutex(cacheKey) == 1L) {
+            CacheKey mutexKey = new CacheKey(cacheKey.getNameSpace(), MUTEX_PREFIX + cacheKey.getKey());
+            if (cache.setMutex(mutexKey) == 1L) {
                 proceedRet = jp.proceed();
                 //放入缓存
                 if (proceedRet != null) {
                     CacheWrapper newWrapper = new CacheWrapper(proceedRet, expireTime);
                     cache.set(cacheKey, newWrapper);
+                    cache.delete(mutexKey);
                 }
                 return proceedRet;
             } else {

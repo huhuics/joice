@@ -42,7 +42,7 @@ public class ShardedJedisCache implements Cache {
     /** mutex过期时间,单位：秒 */
     private static final int                      EXPIRE_TIME = 20;
 
-    private static final String                   mutex       = "mutex";
+    private static final String                   MUTEX_VAL   = "temp_mutex_val";
 
     public ShardedJedisCache(ShardedJedis shardedJedis) {
         this(shardedJedis, new CacheConfig());
@@ -132,7 +132,7 @@ public class ShardedJedisCache implements Cache {
         if (cacheKey == null || StringUtils.isEmpty(key = cacheKey.getKey())) {
             return 0L;
         }
-        Long ret = shardedJedis.setnx(stringSerializer.serialize(key), stringSerializer.serialize(mutex));
+        Long ret = shardedJedis.setnx(stringSerializer.serialize(key), stringSerializer.serialize(MUTEX_VAL));
         shardedJedis.expire(stringSerializer.serialize(key), EXPIRE_TIME);
 
         return ret;
