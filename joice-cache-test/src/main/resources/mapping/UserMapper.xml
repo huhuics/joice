@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sunveee.template.ssm.dao.UserDao">
+	<resultMap id="BaseResultMap" type="com.sunveee.template.ssm.model.User">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="salt" property="salt" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, name, password, salt, type, status
+	</sql>
+
+	<!-- 根据id查找 -->
+	<select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from user
+		where id = #{id, jdbcType=INTEGER}
+	</select>
+
+	<!-- 根据id删除 -->
+	<delete id="deleteById" parameterType="java.lang.Integer">
+		delete from user
+		where id =
+		#{id, jdbcType=INTEGER}
+	</delete>
+
+	<!-- 列表加载（分页） -->
+	<select id="selectUserPage" parameterType="com.sunveee.template.ssm.util.PageEntity"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from user
+		<if test="pageNo!=null and pageSize!=null">
+			limit #{startNo, jdbcType=INTEGER}, #{pageSize,
+			jdbcType=INTEGER}
+		</if>
+	</select>
+
+	<!-- 返回总数 -->
+	<select id="countAll" resultType="java.lang.Integer">
+		select count(*) from user
+	</select>
+</mapper>
