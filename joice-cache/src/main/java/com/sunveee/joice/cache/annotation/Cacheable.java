@@ -16,12 +16,12 @@ import java.lang.annotation.Target;
 public @interface Cacheable {
 
     /**
-     * 缓存所计入的目标参数位置
-     * <p>默认为<code>""</code>，表示不包括参数
+     * 缓存所计入的目标参数位置，从0开始
+     * <p>默认为<code>{}</code>，表示不包括参数
      * 
      * @return
      */
-    String argRange() default "";
+    int[] argRange() default {};
 
     /**
      * 缓存过期时间

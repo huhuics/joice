@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                        http://www.springframework.org/schema/aop
+                        http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+                        
+    <bean id="cache" class="com.sunveee.joice.cache.impl.local.map.MapCache">
+    </bean>
+                        
+    <bean id="cacheHandler" class="com.sunveee.joice.cache.handler.CacheHandler">
+    	<constructor-arg ref="cache" />
+    </bean>
+
+	<bean id="cacheAspect" class="com.sunveee.joice.cache.aspect.CacheAspect" >
+		<constructor-arg ref="cacheHandler" />
+	</bean>
+
+	<!-- 配置AOP -->
+	<aop:config proxy-target-class="true">
+		<aop:aspect ref="cacheAspect">
+			<!-- 配置切点表达式 -->
+			<aop:pointcut expression="execution(* com.sunveee.template.ssm.service.impl.*.*(..)) &amp;&amp; @annotation(com.sunveee.joice.cache.annotation.Cacheable)" id="busiPointcut" />
+			<aop:around method="around" pointcut-ref="busiPointcut"/>
+		</aop:aspect>
+	</aop:config>
+
+</beans>

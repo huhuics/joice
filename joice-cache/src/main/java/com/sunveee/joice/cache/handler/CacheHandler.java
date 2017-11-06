@@ -15,6 +15,7 @@ import com.sunveee.joice.cache.Cache;
 import com.sunveee.joice.cache.annotation.Cacheable;
 import com.sunveee.joice.cache.model.Key;
 import com.sunveee.joice.cache.model.Value;
+import com.sunveee.joice.cache.util.KeyGenetrator;
 import com.sunveee.joice.cache.util.TargetDetailUtil;
 
 /**
@@ -25,10 +26,7 @@ import com.sunveee.joice.cache.util.TargetDetailUtil;
  */
 public class CacheHandler {
 
-    private static final Logger logger    = LoggerFactory.getLogger(CacheHandler.class);
-
-    private static final String UNDERLINE = "_";
-    private static final String COMMA     = ",";
+    private static final Logger logger = LoggerFactory.getLogger(CacheHandler.class);
 
     private final Cache         cache;
 
@@ -41,22 +39,22 @@ public class CacheHandler {
         Object proceedRet = null;
 
         // 获取注解配置
-        String argRange = cacheable.argRange();
+        int[] argRange = cacheable.argRange();
         int expireTime = cacheable.expireTime();
         Object[] args = pjp.getArgs();
         AssertUtil.assertTrue(expireTime >= 0, "超时时间不能为负");
 
-        LogUtil.info(logger, "注解配置: argRange={0},expireTime={1},args={2}", argRange, expireTime, args);
+        LogUtil.info(logger, "注解配置: argRange={0},expireTime={1}", StringUtils.join(argRange, ','), expireTime);
 
         Class returnType = TargetDetailUtil.getReturnType(pjp);
 
         // 根据配置获取Key
-        Key key = generateKey(TargetDetailUtil.getClass(pjp).getCanonicalName(), TargetDetailUtil.getMethod(pjp).getName(), args, argRange);
+        Key key = KeyGenetrator.generateKey(TargetDetailUtil.getClass(pjp).getCanonicalName(), TargetDetailUtil.getMethod(pjp).getName(), args, argRange);
 
         // 查询缓存
         Value value = cache.get(key);
 
-        if (value != null) { //缓存命中
+        if (value != null) { // 缓存命中
             Object obj = value.getObj();
             if (returnType.isAssignableFrom(obj.getClass())) {
                 return obj;
@@ -75,45 +73,4 @@ public class CacheHandler {
         return proceedRet;
     }
 
-    /**
-     * 获取Key
-     * 
-     * @param className
-     * @param methodName
-     * @param args
-     * @param argRange
-     * @return
-     */
-    private Key generateKey(String className, String methodName, Object[] args, String argRange) {
-        int[] argIndexs = stringtoInt(argRange);
-
-        StringBuilder keyStr = new StringBuilder();
-        keyStr.append(className);
-        keyStr.append(UNDERLINE);
-        keyStr.append(methodName);
-
-        if (null != argIndexs) {
-            for (int argIndex : argIndexs) {
-                keyStr.append(UNDERLINE);
-                keyStr.append(args[argIndex]);
-            }
-        }
-
-        return new Key(keyStr.toString());
-
-    }
-
-    private static int[] stringtoInt(String str) {
-        if (StringUtils.isBlank(str)) {
-            return null;
-        }
-        String[] strs = str.split(COMMA);
-        int[] result = new int[strs.length];
-
-        for (int i = 0; i < strs.length; i++) {
-            result[i] = Integer.parseInt(strs[i]);
-        }
-
-        return result;
-    }
 }

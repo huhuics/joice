@@ -24,6 +24,10 @@ public class MapCache implements Cache {
 
     private ConcurrentHashMap<String, Value> cache;
 
+    public MapCache() {
+        cache = new ConcurrentHashMap<>();
+    }
+
     @Override
     public void set(Key key, Value value) {
         String keyStr;
@@ -31,12 +35,13 @@ public class MapCache implements Cache {
             return;
         }
         cache.put(keyStr, value);
+        LogUtil.info(logger, "MapCache写缓存成功: keyStr={0},value={1}", keyStr, value);
 
-        // TODO 对缓存条数的校验
     }
 
     @Override
     public Value get(Key key) {
+        LogUtil.info(logger, "MapCache读缓存: key={0}", key);
         String keyStr;
         if (null == key || StringUtils.isBlank(keyStr = key.getKeyStr())) {
             return null;
@@ -45,7 +50,7 @@ public class MapCache implements Cache {
         try {
             result = cache.get(keyStr);
         } catch (Exception e) {
-            LogUtil.error(e, logger, "查询Map缓存失败,key={0}", key);
+            LogUtil.error(e, logger, "MapCache读缓存发生异常,key={0}", key);
         }
         if (null == result) {
             return null;
@@ -54,6 +59,7 @@ public class MapCache implements Cache {
             cache.remove(keyStr);
             return null;
         }
+        LogUtil.info(logger, "MapCache读缓存成功: key={0},result={1}", key, result);
         return result;
     }
 

@@ -28,4 +28,11 @@ public class UserController {
         return "user/user-list";
     }
 
+    @RequestMapping(value = "/count")
+    public String toCountUser(Model model) {
+        int infoCount = userService.getAllUserCount();
+        model.addAttribute("infoCount", infoCount);
+        return "user/user-count";
+    }
+
 }

@@ -18,8 +18,12 @@ public class CacheAspect {
 
     private CacheHandler handler;
 
+    public CacheAspect(CacheHandler handler) {
+        this.handler = handler;
+    }
+
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
-        //判断是否存在@Cache注解
+        //判断是否存在@Cacheable注解
         Method method = TargetDetailUtil.getMethod(pjp);
         boolean cacheAnnoPresent = method.isAnnotationPresent(Cacheable.class);
 

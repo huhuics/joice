@@ -43,6 +43,6 @@
 
 	<!-- 返回总数 -->
 	<select id="countAll" resultType="java.lang.Integer">
-		select count(*) from user
+		select count(1) from user
 	</select>
 </mapper>

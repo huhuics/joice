@@ -9,11 +9,12 @@ import java.lang.reflect.Method;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.joice.common.util.LogUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 获取切点类的详细信息工具类
+ * 获取切点的详细信息工具类
  * 
  * @author 51
  * @version $Id: TargetDetailUtil.java, v 0.1 2017年11月3日 下午2:37:44 51 Exp $
@@ -43,7 +44,7 @@ public class TargetDetailUtil {
         try {
             result = target.getClass().getMethod(ms.getName(), ms.getParameterTypes());
         } catch (NoSuchMethodException | SecurityException e) {
-            logger.error("", e);
+            LogUtil.error(e, logger, "获取注解方法时发生异常");
         }
         return result;
     }
