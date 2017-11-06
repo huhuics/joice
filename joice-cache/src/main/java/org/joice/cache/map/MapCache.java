@@ -4,6 +4,7 @@
  */
 package org.joice.cache.map;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +35,10 @@ public class MapCache implements Cache {
     private final MapCacheChangeListener            listener;
 
     private Thread                                  daemonThread;
+
+    public MapCache() {
+        this(new CacheConfig());
+    }
 
     public MapCache(CacheConfig config) {
         LogUtil.info(logger, "Map Cache initing...");
@@ -90,6 +95,35 @@ public class MapCache implements Cache {
             return null;
         }
 
+        return wrapper;
+    }
+
+    public CacheWrapper get(CacheKey cacheKey, Callable<CacheWrapper> callable) {
+        String key;
+        if (cacheKey == null || StringUtils.isEmpty(key = cacheKey.getKey())) {
+            return null;
+        }
+
+        CacheWrapper wrapper = null;
+        if (cache.containsKey(key)) {
+            wrapper = (CacheWrapper) cache.get(key);
+        } else {
+            synchronized (cache) {
+                try {
+                    if (!cache.containsKey(key)) {
+                        wrapper = callable.call();
+                    } else {
+                        wrapper = (CacheWrapper) cache.get(key);
+                    }
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+            }
+        }
+
+        if (wrapper != null) {
+            wrapper.setLastAccessTime(System.currentTimeMillis());
+        }
         return wrapper;
     }
 

@@ -5,6 +5,7 @@
 package org.joice.cache.handler;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -15,6 +16,8 @@ import org.joice.cache.annotation.Cacheable;
 import org.joice.cache.ke.gene.HashCodeKeyGenerator;
 import org.joice.cache.ke.gene.KeyGenerator;
 import org.joice.cache.ke.gene.SpringELParser;
+import org.joice.cache.map.MapCache;
+import org.joice.cache.redis.ShardedJedisCache;
 import org.joice.cache.to.CacheKey;
 import org.joice.cache.to.CacheWrapper;
 import org.joice.cache.util.TargetDetailUtil;
@@ -90,19 +93,23 @@ public class DefaultHandler implements Handler {
 
         Object proceedRet = null;
         if (sync) {
-            CacheKey mutexKey = new CacheKey(cacheKey.getNameSpace(), MUTEX_PREFIX + cacheKey.getKey());
-            if (cache.setMutex(mutexKey) == 1L) {
-                proceedRet = jp.proceed();
-                //放入缓存
-                if (proceedRet != null) {
-                    CacheWrapper newWrapper = new CacheWrapper(proceedRet, expireTime);
-                    cache.set(cacheKey, newWrapper);
-                    cache.delete(mutexKey);
+            if (cache instanceof MapCache) {
+                return getFromMapCache(jp, cacheKey, expireTime);
+            } else if (cache instanceof ShardedJedisCache) {
+                CacheKey mutexKey = new CacheKey(cacheKey.getNameSpace(), MUTEX_PREFIX + cacheKey.getKey());
+                if (cache.setMutex(mutexKey) == 1L) {
+                    proceedRet = jp.proceed();
+                    //放入缓存
+                    if (proceedRet != null) {
+                        CacheWrapper newWrapper = new CacheWrapper(proceedRet, expireTime);
+                        cache.set(cacheKey, newWrapper);
+                        cache.delete(mutexKey);
+                    }
+                    return proceedRet;
+                } else {
+                    Thread.sleep(50);
+                    return getValue(jp, cacheKey, sync, expireTime);
                 }
-                return proceedRet;
-            } else {
-                Thread.sleep(50);
-                return getValue(jp, cacheKey, sync, expireTime);
             }
         } else {
             proceedRet = jp.proceed();
@@ -113,6 +120,7 @@ public class DefaultHandler implements Handler {
             }
             return proceedRet;
         }
+        return proceedRet;
     }
 
     /**
@@ -147,6 +155,32 @@ public class DefaultHandler implements Handler {
         }
 
         return proceedRet;
+    }
+
+    private Object getFromMapCache(final ProceedingJoinPoint jp, final CacheKey cacheKey, final int expireTime) {
+        CacheWrapper _wrapper = ((MapCache) cache).get(cacheKey, new Callable<CacheWrapper>() {
+            @Override
+            public CacheWrapper call() {
+                Object obj = null;
+                try {
+                    obj = jp.proceed();
+                } catch (Throwable e) {
+                    logger.error("", e);
+                }
+
+                CacheWrapper wrapper = null;
+                if (obj != null) {
+                    wrapper = new CacheWrapper(obj, expireTime);
+                    cache.set(cacheKey, wrapper);
+                }
+                return wrapper;
+            }
+        });
+        if (_wrapper != null) {
+            return _wrapper.getObj();
+        }
+
+        return null;
     }
 
     private boolean isCacheable(String conditionSpEl, Object[] args) {

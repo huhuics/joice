@@ -19,9 +19,13 @@
     	</constructor-arg>
     </bean>
     
-    <bean id="cache" class="org.joice.cache.redis.ShardedJedisCache">
+    <!-- 测试ShardedJedisCache -->
+    <!-- <bean id="cache" class="org.joice.cache.redis.ShardedJedisCache">
     	<constructor-arg ref="shardedJedis" />
-    </bean>
+    </bean> -->
+    
+    <!-- 测试MapCache -->
+    <bean id="cache" class="org.joice.cache.map.MapCache" />
                         
     <bean id="defaultHandler" class="org.joice.cache.handler.DefaultHandler">
     	<constructor-arg ref="cache" />
