@@ -61,8 +61,7 @@
 ```java
     @CacheDel(items = { @CacheDelItem(key = "'payOrderService_getById_'+#args[0].id") }, condition = "#retVal == true")
     public boolean updateOrder(BizPayOrder order) {
-        int ret = bizPayOrderMapper.updateByPrimaryKey(order);
-        return ret == 1 ? true : false;
+        return bizPayOrderMapper.updateByPrimaryKey(order) == 1;
     }
 ```    
 + 当需要修改缓存时，为避免缓存与数据库双写不一致，采取的策略是先修改数据库，成功以后再删除缓存。[为什么？](https://github.com/huhuics/Accumulate/blob/master/%E6%9E%B6%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95/%E7%BC%93%E5%AD%98%E6%9B%B4%E6%96%B0%E5%A5%97%E8%B7%AF.md)    

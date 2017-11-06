@@ -50,7 +50,6 @@ public class PayOrderServiceImpl implements PayOrderService {
     @Override
     @CacheDel(items = { @CacheDelItem(key = "'payOrderService_getById_'+#args[0].id") }, condition = "#retVal == true")
     public boolean updateOrder(BizPayOrder order) {
-        int ret = bizPayOrderMapper.updateByPrimaryKey(order);
-        return ret == 1 ? true : false;
+        return bizPayOrderMapper.updateByPrimaryKey(order) == 1;
     }
 }
