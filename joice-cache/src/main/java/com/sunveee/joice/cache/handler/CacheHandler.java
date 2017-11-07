@@ -49,7 +49,7 @@ public class CacheHandler {
         Class returnType = TargetDetailUtil.getReturnType(pjp);
 
         // 根据配置获取Key
-        Key key = KeyGenetrator.generateKey(TargetDetailUtil.getClass(pjp).getCanonicalName(), TargetDetailUtil.getMethod(pjp).getName(), args, argRange);
+        Key key = KeyGenetrator.generateKey(cache.getConfig().getNameSpace(), TargetDetailUtil.getClass(pjp).getCanonicalName(), TargetDetailUtil.getMethod(pjp).getName(), args, argRange);
 
         // 查询缓存
         Value value = cache.get(key);

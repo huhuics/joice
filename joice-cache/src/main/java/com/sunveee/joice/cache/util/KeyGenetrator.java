@@ -23,7 +23,7 @@ public class KeyGenetrator {
      * @param argRange
      * @return
      */
-    public static Key generateKey(String classCanonicalName, String methodName, Object[] args, int[] argRange) {
+    public static Key generateKey(String namespace, String classCanonicalName, String methodName, Object[] args, int[] argRange) {
         StringBuilder keyStr = new StringBuilder();
 
         keyStr.append(classCanonicalName);
@@ -43,7 +43,7 @@ public class KeyGenetrator {
                 throw new RuntimeException("使用参数创建key时发生异常");
             }
         }
-        return new Key(keyStr.toString());
+        return new Key(namespace, keyStr.toString());
 
     }
 
