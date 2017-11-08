@@ -22,7 +22,7 @@
     - restore()
     
 ## joice-cache-test
-使用spring + springMVC + myBatis搭建的web应用，应用`joice-cache`的缓存以提供配置示例以及进行功能测试。
+使用spring + springMVC + myBatis搭建web应用，应用`joice-cache`以验证其功能，并提供配置示例。
 
 `spring-cache.xml`中配置如下：
 
@@ -91,4 +91,5 @@ public User getUserById(int userId) {
 
 # 启动
 项目启动前需要对数据库连接进行配置。
+
 [joice-cache-test] --> Run as --> Maven build... --> tomcat7:run
