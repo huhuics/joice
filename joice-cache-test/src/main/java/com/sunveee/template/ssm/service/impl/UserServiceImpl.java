@@ -22,21 +22,21 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserDao             userDao;
 
-    @Cacheable(argRange = { 0 })
+    @Cacheable(argRange = { 0 }, expireTime = 3)
     @Override
     public User getUserById(int userId) {
         LogUtil.info(logger, "数据库查询User,查询条件: userId={0}", userId);
         return this.userDao.selectById(userId);
     }
 
-    @Cacheable(argRange = { 0, 1 })
+    @Cacheable(argRange = { 0, 1 }, expireTime = 3)
     @Override
     public List<User> getUserPage(int pageNo, int pageSize) {
         LogUtil.info(logger, "数据库查询UserList,查询条件: pageNo={0},pageSize={1}", pageNo, pageSize);
         return this.userDao.selectUserPage(new PageEntity(pageNo, pageSize));
     }
 
-    @Cacheable
+    @Cacheable(expireTime = 3)
     @Override
     public Integer getAllUserCount() {
         LogUtil.info(logger, "数据库查询User总数");

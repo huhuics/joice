@@ -1,13 +1,17 @@
 package com.sunveee.template.ssm.model;
 
-public class User {
+import java.io.Serializable;
 
-    private Integer id;
-    private String  name;
-    private String  password;
-    private String  salt;
-    private Integer type;
-    private Integer status;
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 4268409901564612312L;
+
+    private Integer           id;
+    private String            name;
+    private String            password;
+    private String            salt;
+    private Integer           type;
+    private Integer           status;
 
     public Integer getId() {
         return id;
