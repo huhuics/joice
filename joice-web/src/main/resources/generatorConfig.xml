@@ -15,7 +15,7 @@
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>  
         <!-- 生成领域对象的包名和位置 -->
-        <javaModelGenerator targetPackage="org.joice.common.dao.domain" targetProject="src/main/java">  
+        <javaModelGenerator targetPackage="org.joice.mvc.dao.domain" targetProject="src/main/java">  
             <property name="enableSubPackages" value="true"/>  
             <property name="trimStrings" value="true"/>  
         </javaModelGenerator>  
@@ -24,7 +24,7 @@
             <property name="enableSubPackages" value="true"/>  
         </sqlMapGenerator>  
         <!-- 生成DAO的包名和位置 -->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="org.joice.common.dao" targetProject="src/main/java">  
+        <javaClientGenerator type="XMLMAPPER" targetPackage="org.joice.mvc.dao" targetProject="src/main/java">  
             <property name="enableSubPackages" value="true"/>  
         </javaClientGenerator>  
 		
