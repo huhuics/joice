@@ -90,4 +90,18 @@
       gmt_create = #{gmtCreate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  
+  <!-- 根据user_id查询账户 -->
+  <select id="selectByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from biz_user_account
+    where user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+  
+  <update id="updateBalance" parameterType="java.util.Map">
+  	UPDATE biz_user_account SET account_balance = account_balance + #{modifiedBalance}
+  	WHERE user_id = #{userId}
+  </update>
+  
 </mapper>
