@@ -9,10 +9,10 @@
 	<!-- 事务消息生产者 -->
 	<bean id="orderCreationMqProducerService" class="org.joice.mvc.service.impl.OrderCreationMqProducerServiceImpl"
 		init-method="init" destroy-method="destory">
-		<description>RocketMQ transaction producer</description>
+		<description>order creation transaction producer</description>
 		<property name="txProducerGroup" value="${txProducerGroup}" />
 		<property name="namesrvAddr" value="${namesrvAddr}" />
-		<property name="topic" value="${payOrderTopic}" />
+		<property name="topic" value="${topic}" />
 		<property name="tag" value="${payOrderTag}" />
 	</bean>
 

@@ -16,7 +16,10 @@ import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.joice.common.dao.domain.BizPayOrder;
+import org.joice.common.dto.PayOrderRequest;
+import org.joice.common.enums.TradeStatusEnmu;
 import org.joice.common.util.LogUtil;
+import org.joice.common.util.Money;
 import org.joice.service.busi.PayOrderMqConsumer;
 import org.joice.service.busi.PayOrderService;
 import org.slf4j.Logger;
@@ -64,7 +67,10 @@ public class PayOrderMqConsumerImpl implements PayOrderMqConsumer {
                 LogUtil.info(logger, "PayOrderMqConsumer开始消费");
                 for (MessageExt msg : msgs) {
                     try {
-                        BizPayOrder order = JSON.parse(new String(msg.getBody()), BizPayOrder.class);
+                        PayOrderRequest orderRequest = JSON.parse(new String(msg.getBody()), PayOrderRequest.class);
+
+                        BizPayOrder order = convert2Domain(orderRequest);
+
                         payOrderService.insert(order);
                         LogUtil.info(logger, "消息消费成功,order={0}", order);
                     } catch (Exception e) {
@@ -96,6 +102,20 @@ public class PayOrderMqConsumerImpl implements PayOrderMqConsumer {
             }
         }).start();
 
+    }
+
+    private BizPayOrder convert2Domain(PayOrderRequest orderRequest) {
+        BizPayOrder order = new BizPayOrder();
+        order.setBuyerUserId(orderRequest.getBuyerUserId());
+        order.setMerchantId(orderRequest.getMerchantId());
+        order.setTradeNo(orderRequest.getTradeNo());
+        order.setTradeAmount(new Money(orderRequest.getTradeAmount()));
+        order.setTradeStatus(TradeStatusEnmu.trade_success.getCode());
+        order.setScene(orderRequest.getScene());
+        order.setGoodsDetail(orderRequest.getGoodsDetail());
+        order.setNotifyUrl(orderRequest.getNotifyUrl());
+
+        return order;
     }
 
     public String getConsumerGroup() {

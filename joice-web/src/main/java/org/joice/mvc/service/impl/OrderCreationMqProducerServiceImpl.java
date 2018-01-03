@@ -13,7 +13,7 @@ import org.apache.rocketmq.client.producer.TransactionCheckListener;
 import org.apache.rocketmq.client.producer.TransactionMQProducer;
 import org.apache.rocketmq.client.producer.TransactionSendResult;
 import org.apache.rocketmq.common.message.Message;
-import org.joice.common.dao.domain.BizPayOrder;
+import org.joice.common.dto.PayOrderRequest;
 import org.joice.common.util.LogUtil;
 import org.joice.mvc.service.OrderCreationMqProducerService;
 import org.slf4j.Logger;
@@ -64,11 +64,11 @@ public class OrderCreationMqProducerServiceImpl implements OrderCreationMqProduc
     }
 
     @Override
-    public boolean process(BizPayOrder order) throws MQClientException {
-        LogUtil.info(logger, "收到发送创建订单消息请求,order={0}", order);
+    public boolean process(PayOrderRequest orderRequest) throws MQClientException {
+        LogUtil.info(logger, "收到发送创建订单消息请求,orderRequest={0}", orderRequest);
 
-        Message msg = createMessage(order);
-        TransactionSendResult sendRet = txMQProducer.sendMessageInTransaction(msg, localTxExecuter, order);
+        Message msg = createMessage(orderRequest);
+        TransactionSendResult sendRet = txMQProducer.sendMessageInTransaction(msg, localTxExecuter, orderRequest);
 
         LogUtil.info(logger, "事务消息发送完成,sendRet={0}", sendRet);
 
@@ -81,8 +81,8 @@ public class OrderCreationMqProducerServiceImpl implements OrderCreationMqProduc
         LogUtil.info(logger, "joice-web order creation txMQProducer shutdown successful!");
     }
 
-    private Message createMessage(BizPayOrder order) {
-        String orderJson = JSON.toJSONString(order);
+    private Message createMessage(PayOrderRequest orderRequest) {
+        String orderJson = JSON.toJSONString(orderRequest);
         String key = String.valueOf(System.currentTimeMillis());
         Message msg = new Message(topic, tag, key, orderJson.getBytes());
 

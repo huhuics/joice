@@ -5,8 +5,12 @@
 package org.joice.service.test.busi;
 
 import java.lang.reflect.Constructor;
+import java.util.Map;
 
 import org.junit.Test;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 
 /**
  * 通过反射实例化私有构造方法的类
@@ -31,6 +35,18 @@ public class BuildPrivateClass {
         System.out.println(StudentEnum.instance);
         StudentEnum.instance.setAge(34);
         System.out.println(StudentEnum.instance);
+    }
+
+    @Test
+    public void test3() {
+        String jsonStr = "{\"buyerUserId\":\"2088001\",\"goodsDetail\":\"华为mate10 pro 128g\",\"merchantId\":\"3066001\",\"tradeAmount\":{\"amount\":93.60,\"cent\":9360,\"centFactor\":100,\"currency\":\"CNY\",\"currencyCode\":\"CNY\"},\"tradeNo\":\"1514980730656\"}";
+
+        //解析json字段
+        Map<String, String> bizParaMap = JSON.parseObject(jsonStr, new TypeReference<Map<String, String>>() {
+        });
+
+        System.out.println(bizParaMap);
+
     }
 
 }

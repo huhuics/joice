@@ -6,9 +6,10 @@ package org.joice.mvc.controller;
 
 import javax.annotation.Resource;
 
-import org.joice.common.dao.domain.BizPayOrder;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.joice.common.dto.PayOrderRequest;
+import org.joice.common.enums.TradeSceneEnum;
 import org.joice.common.util.LogUtil;
-import org.joice.common.util.Money;
 import org.joice.mvc.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,10 +53,10 @@ public class OrderController {
 
     @ResponseBody
     @RequestMapping(value = "/doOrder", method = RequestMethod.POST)
-    public String doOrder(WebRequest request, ModelMap map) {
+    public String doOrder(WebRequest webRequest, ModelMap map) {
         try {
-            BizPayOrder order = orderResolver(request);
-            orderService.pay(order);
+            PayOrderRequest orderRequest = orderRequestResolver(webRequest);
+            orderService.pay(orderRequest);
         } catch (Exception e) {
             LogUtil.error(e, logger, FAIL_MSG);
             return FAIL_MSG;
@@ -65,19 +66,20 @@ public class OrderController {
     }
 
     /**
-     * 组装订单实体对象
-     * @param request
+     * 组装订单请求对象
+     * @param webRequest
      * @return
      */
-    private BizPayOrder orderResolver(WebRequest request) {
-        BizPayOrder order = new BizPayOrder();
-        order.setBuyerUserId(request.getParameter("buyerUserId"));
-        order.setMerchantId(request.getParameter("merchantId"));
-        order.setTradeNo(request.getParameter("tradeNo"));
-        order.setTradeAmount(new Money(request.getParameter("tradeAmount")));
-        order.setGoodsDetail(request.getParameter("goodsDetail"));
+    private PayOrderRequest orderRequestResolver(WebRequest webRequest) {
+        PayOrderRequest orderRequest = new PayOrderRequest();
+        orderRequest.setBuyerUserId(webRequest.getParameter("buyerUserId"));
+        orderRequest.setMerchantId(webRequest.getParameter("merchantId"));
+        orderRequest.setTradeNo(webRequest.getParameter("tradeNo"));
+        orderRequest.setTradeAmount(NumberUtils.toDouble(webRequest.getParameter("tradeAmount")));
+        orderRequest.setGoodsDetail(webRequest.getParameter("goodsDetail"));
+        orderRequest.setScene(TradeSceneEnum.bar_code.getCode());
 
-        return order;
+        return orderRequest;
     }
 
     /**

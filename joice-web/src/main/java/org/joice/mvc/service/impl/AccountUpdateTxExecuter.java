@@ -14,8 +14,9 @@ import org.apache.rocketmq.client.producer.LocalTransactionState;
 import org.apache.rocketmq.common.message.Message;
 import org.joice.common.constant.Constants;
 import org.joice.common.dao.BizUserAccountMapper;
-import org.joice.common.dao.domain.BizPayOrder;
+import org.joice.common.dto.PayOrderRequest;
 import org.joice.common.util.LogUtil;
+import org.joice.common.util.Money;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class AccountUpdateTxExecuter implements LocalTransactionExecuter {
 
         LogUtil.info(logger, "收到执行本地账户修改事务请求");
 
-        BizPayOrder order = (BizPayOrder) arg;
+        PayOrderRequest order = (PayOrderRequest) arg;
 
         int ret = bizUserAccountMapper.updateBalance(assembleParaMap(order));
 
@@ -56,13 +57,15 @@ public class AccountUpdateTxExecuter implements LocalTransactionExecuter {
     /**
      * 组装参数Map
      */
-    private Map<String, Object> assembleParaMap(BizPayOrder order) {
+    private Map<String, Object> assembleParaMap(PayOrderRequest order) {
         Map<String, Object> paraMap = new HashMap<String, Object>();
+
+        Money tradeAmount = new Money(order.getTradeAmount());
+
         //金额转化为负数，表示扣款
-        paraMap.put(Constants.MODIDIED_BALANCE, -order.getTradeAmount().getCent());
+        paraMap.put(Constants.MODIDIED_BALANCE, -tradeAmount.getCent());
         paraMap.put(Constants.USER_ID, order.getBuyerUserId());
 
         return paraMap;
     }
-
 }

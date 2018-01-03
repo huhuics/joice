@@ -5,7 +5,7 @@
 package org.joice.mvc.service;
 
 import org.apache.rocketmq.client.exception.MQClientException;
-import org.joice.common.dao.domain.BizPayOrder;
+import org.joice.common.dto.PayOrderRequest;
 
 /**
  * 创建订单消息生产者接口
@@ -20,6 +20,6 @@ public interface OrderCreationMqProducerService {
      * @throws MQClientException 
      * @return true表示发送成功
      */
-    boolean process(BizPayOrder order) throws MQClientException;
+    boolean process(PayOrderRequest orderRequest) throws MQClientException;
 
 }

@@ -198,7 +198,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
-				<version>3.4</version>
+				<version>3.7</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
@@ -268,7 +268,7 @@
 					<version>2.1</version>
 					<configuration>
 						<path>/joice</path>
-						<port>8088</port>
+						<port>8080</port>
 					</configuration>
 				</plugin>
 

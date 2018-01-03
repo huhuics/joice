@@ -39,9 +39,9 @@
 	<bean id="payOrderMqConsumer" class="org.joice.service.busi.impl.PayOrderMqConsumerImpl"
 		init-method="init">
 		<description>PayOrderMqConsumer</description>
-		<property name="consumerGroup" value="${consumerGroup}" />
+		<property name="consumerGroup" value="${payOrderConsumerGroup}" />
 		<property name="namesrvAddr" value="${nameServerAddr}" />
-		<property name="topic" value="${payOrderTopic}" />
+		<property name="topic" value="${topic}" />
 		<property name="tag" value="${payOrderTag}" />
 	</bean>
 

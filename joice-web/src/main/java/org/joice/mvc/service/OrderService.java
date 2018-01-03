@@ -4,7 +4,7 @@
  */
 package org.joice.mvc.service;
 
-import org.joice.common.dao.domain.BizPayOrder;
+import org.joice.common.dto.PayOrderRequest;
 
 /**
  * 订单服务接口
@@ -15,9 +15,9 @@ public interface OrderService {
 
     /**
      * 用户下单
-     * @param order 订单实体对象
+     * @param order 订单请求对象
      * @return      true表示下单成功
      */
-    boolean pay(BizPayOrder order);
+    boolean pay(PayOrderRequest orderRequest);
 
 }

@@ -8,8 +8,8 @@ import javax.annotation.Resource;
 
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.joice.common.dao.BizUserAccountMapper;
-import org.joice.common.dao.domain.BizPayOrder;
 import org.joice.common.dao.domain.BizUserAccount;
+import org.joice.common.dto.PayOrderRequest;
 import org.joice.common.util.AssertUtil;
 import org.joice.common.util.LogUtil;
 import org.joice.mvc.service.OrderCreationMqProducerService;
@@ -41,17 +41,17 @@ public class OrderServiceImpl implements OrderService {
     private OrderCreationMqProducerService orderCreationMqProducerService;
 
     @Override
-    public boolean pay(BizPayOrder order) {
+    public boolean pay(PayOrderRequest orderRequest) {
 
-        LogUtil.info(logger, "收到支付请求,userId={0},amount={1}", order.getBuyerUserId(), order.getTradeAmount());
+        LogUtil.info(logger, "收到支付请求,userId={0},amount={1}", orderRequest.getBuyerUserId(), orderRequest.getTradeAmount());
 
         //1.查询账户
-        BizUserAccount userAccount = bizUserAccountMapper.selectByUserId(order.getBuyerUserId());
+        BizUserAccount userAccount = bizUserAccountMapper.selectByUserId(orderRequest.getBuyerUserId());
         AssertUtil.assertNotNull(userAccount, "查询账户为空");
 
         //2.发送事务消息创建订单
         try {
-            return orderCreationMqProducerService.process(order);
+            return orderCreationMqProducerService.process(orderRequest);
         } catch (MQClientException e) {
             throw new RuntimeException("事务消息发送失败", e);
         }

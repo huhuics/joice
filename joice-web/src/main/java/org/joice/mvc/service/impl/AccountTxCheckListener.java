@@ -30,6 +30,9 @@ public class AccountTxCheckListener implements TransactionCheckListener {
         LogUtil.info(logger, "收到本地事务回查请求");
 
         String isTxSuccess = msgExt.getProperty(Constants.IS_LOCAL_TX_SUCCESS);
+
+        LogUtil.info(logger, "msgExt={0}", msgExt);
+
         if (StringUtils.equals(isTxSuccess, Constants.TX_SUCCESS)) {
 
             LogUtil.info(logger, "本地事务回查结果:提交成功");
