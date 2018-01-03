@@ -11,8 +11,12 @@ package org.joice.common.constant;
  */
 public interface Constants {
 
-    static final String MODIDIED_BALANCE = "modifiedBalance";
+    static final String MODIDIED_BALANCE    = "modifiedBalance";
 
-    static final String USER_ID          = "userId";
+    static final String USER_ID             = "userId";
+
+    static final String IS_LOCAL_TX_SUCCESS = "isLocalTxSuccess";
+
+    static final String TX_SUCCESS          = "tx_success";
 
 }

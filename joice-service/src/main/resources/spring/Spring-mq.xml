@@ -35,4 +35,14 @@
 		<property name="tag" value="${tag}" />
 	</bean>
 
+	<!-- 订单消费者 -->
+	<bean id="payOrderMqConsumer" class="org.joice.service.busi.impl.PayOrderMqConsumerImpl"
+		init-method="init">
+		<description>PayOrderMqConsumer</description>
+		<property name="consumerGroup" value="${consumerGroup}" />
+		<property name="namesrvAddr" value="${nameServerAddr}" />
+		<property name="topic" value="${payOrderTopic}" />
+		<property name="tag" value="${payOrderTag}" />
+	</bean>
+
 </beans>

@@ -32,4 +32,9 @@ public interface PayOrderService {
      */
     boolean updateOrder(BizPayOrder order);
 
+    /**
+     * 插入订单
+     */
+    int insert(BizPayOrder order);
+
 }
