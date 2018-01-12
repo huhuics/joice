@@ -7,13 +7,26 @@
                         http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 
 	<!-- 事务消息生产者 -->
-	<bean id="orderCreationMqProducerService" class="org.joice.mvc.service.impl.OrderCreationMqProducerServiceImpl"
+	<bean id="orderCreationMqProducerService"
+		class="org.joice.mvc.service.impl.OrderCreationMqProducerServiceImpl"
 		init-method="init" destroy-method="destory">
 		<description>order creation transaction producer</description>
 		<property name="txProducerGroup" value="${txProducerGroup}" />
 		<property name="namesrvAddr" value="${namesrvAddr}" />
 		<property name="topic" value="${topic}" />
 		<property name="tag" value="${payOrderTag}" />
+	</bean>
+
+	<!-- 用户注册消息生产者 -->
+	<bean id="userRegisterMqProducerService"
+		class="org.joice.mvc.service.impl.UserRegisterMqProducerServiceImpl"
+		init-method="init" destroy-method="destory">
+		<description>user register message producer</description>
+		<property name="namesrvAddr" value="${namesrvAddr}" />
+		<property name="topic" value="${topic}" />
+		<property name="producerGroup" value="${producerGroup}" />
+		<property name="emailTag" value="${emailTag}" />
+		<property name="accountTag" value="${accountTag}" />
 	</bean>
 
 </beans>

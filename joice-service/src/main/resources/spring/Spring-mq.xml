@@ -45,4 +45,26 @@
 		<property name="tag" value="${payOrderTag}" />
 	</bean>
 
+	<!-- 用户注册邮件消费者 -->
+	<bean id="userRegisterEmailConsumer"
+		class="org.joice.service.busi.impl.UserRegisterEmailConsumerImpl"
+		init-method="init">
+		<description>userRegisterEmailConsumer</description>
+		<property name="consumerGroup" value="${userRegisterEmailConsumer}" />
+		<property name="namesrvAddr" value="${nameServerAddr}" />
+		<property name="topic" value="${topic}" />
+		<property name="emailTag" value="${emailTag}" />
+	</bean>
+
+	<!-- 用户注册账户消费者 -->
+	<bean id="userRegisterAccountConsumer"
+		class="org.joice.service.busi.impl.UserRegisterAccountConsumerImpl"
+		init-method="init">
+		<description>userRegisterAccountConsumer</description>
+		<property name="consumerGroup" value="${userRegisterAccountConsumer}" />
+		<property name="namesrvAddr" value="${nameServerAddr}" />
+		<property name="topic" value="${topic}" />
+		<property name="accountTag" value="${accountTag}" />
+	</bean>
+
 </beans>
