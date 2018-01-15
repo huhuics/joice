@@ -17,6 +17,7 @@
         - [8.1 错误的方案](#81-错误的方案)
         - [8.2 方案1——业务方自己实现](#82-方案1业务方自己实现)
         - [8.3 方案2——RocketMQ事务消息](#83-方案2rocketmq事务消息)
+        - [8.4 顺序消息](#84-顺序消息)
     - [9.日志](#9日志)
     - [10.缓存](#10缓存)
         - [10.1 数据放入缓存](#101-数据放入缓存)
@@ -121,6 +122,31 @@ RocketMQ把消息的发送分成了2个阶段：**Prepare阶段** 和 **确认�
 用户下单购买商品（http://localhost:8089/joice-web/order/toOrder）， 系统需要完成两件事：扣减用户账户余额和创建订单。这两个动作显然要是原子的。**joice-web**完成扣减用户余额，**joice-service**完成创建订单。joice-web是消息的发送者，joice-service是消息的消费者。示意图如下：
 
 ![](https://github.com/huhuics/Accumulate/blob/master/image/%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF%E5%8F%91%E9%80%81%E5%92%8C%E6%B6%88%E8%B4%B9.png)
+
+### 8.4 顺序消息
+保证消息有序，最简单的方法是生产者--MQ--消费者都是一对一对一的关系。但这个限制会制约消息中间件的吞吐量，通常情况下消费者都是多个的，因此存在消费者重复消费的情况，RocketMQ要求客户端自己做消费幂等控制。那么RocketMQ是如何实现顺序消息的呢？
+
+![](https://github.com/huhuics/Accumulate/blob/master/image/RocketMQ%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF.png)
+
+默认情况下，生产者采用轮询的方式将消息投递到每个队列，每个消费者实例根据订阅的Topic平均分配每个consumer queue，同一个queue中，RocketMQ保证消息是FIFO顺序的。这样，在生产者端，如果能把顺序消息发送到同一个consumer queue中，那么消息就是有序的。下面以下单这一操作说明生产者顺序消息是如何发送的：
+
+```java
+    //RocketMQ通过MessageQueueSelector中实现的算法来确定消息发送到哪一个队列上
+    //RocketMQ默认提供了两种MessageQueueSelector实现：随机/Hash
+    //此处根据业务实现自己的MessageQueueSelector：订单号相同的消息会被先后发送到通过一个队列中
+    SendResult result = rocketMqProducer.getDefaultMQProducer().send(message, new MessageQueueSelector() {
+        @Override
+        public MessageQueue select(List<MessageQueue> mqs, Message msg, Object arg) { //此处的arg参数就是下面传入的orderId
+            int id = (int) arg;
+            int index = id % mqs.size();
+            return mqs.get(index);
+        }
+    }, orderId);
+```
+
+把订单号取模运算，以此确定此消息投递到哪个队列中，即：相同订单号的消息 ----> 有相同取模结果 ----> 投递到相同队列。结果可能是这样的：
+
+![](https://github.com/huhuics/Accumulate/blob/master/image/RocketMQ%E9%A1%BA%E5%BA%8F%E6%B6%88%E6%81%AF-1.png)
 
 ## 9.日志
 logback打印日志，同时基于时间和文件大小分割日志文件。    
