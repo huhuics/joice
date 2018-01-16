@@ -42,6 +42,7 @@
 		<module>joice-web</module>
 		<module>joice-cache</module>
     <module>joice-schedule</module>
+    <module>joice-schedule-admin</module>
   </modules>
 
 	<dependencyManagement>
