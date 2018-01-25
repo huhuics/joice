@@ -7,6 +7,8 @@ package org.joice.schedule.core;
 import java.util.List;
 
 import org.joice.schedule.domain.JobInfo;
+import org.joice.schedule.request.AddJobRequest;
+import org.joice.schedule.request.RemoveJobRequest;
 
 /**
  * 任务调度管理接口
@@ -19,5 +21,15 @@ public interface ScheduleManager {
      * 查询所有的调度任务
      */
     List<JobInfo> getAllJobDetail();
+
+    /**
+     * 增加任务
+     */
+    boolean addJob(AddJobRequest request);
+
+    /**
+     * 删除任务
+     */
+    boolean removeJob(RemoveJobRequest request);
 
 }

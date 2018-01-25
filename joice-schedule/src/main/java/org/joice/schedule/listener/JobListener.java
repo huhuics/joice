@@ -4,7 +4,6 @@
  */
 package org.joice.schedule.listener;
 
-import org.joice.common.util.LogUtil;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.listeners.JobListenerSupport;
@@ -29,13 +28,11 @@ public class JobListener extends JobListenerSupport {
 
     @Override
     public void jobToBeExecuted(JobExecutionContext context) {
-        LogUtil.info(logger, JOB_LISTENER_NAME + " jobToBeExecuted");
 
     }
 
     @Override
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
-        LogUtil.info(logger, JOB_LISTENER_NAME + " jobWasExecuted");
 
     }
 

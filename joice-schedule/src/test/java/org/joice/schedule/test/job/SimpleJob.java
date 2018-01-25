@@ -8,6 +8,7 @@ import org.joice.common.util.LogUtil;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.JobKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,8 @@ public class SimpleJob implements Job {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        LogUtil.info(logger, "simple job 执行");
+        JobKey jobKey = context.getJobDetail().getKey();
+        LogUtil.info(logger, "simple job 执行, JobKey={0}", jobKey.toString());
     }
 
 }

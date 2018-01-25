@@ -12,10 +12,21 @@ import org.joice.common.util.LogUtil;
 import org.joice.schedule.constant.Constant;
 import org.joice.schedule.domain.JobInfo;
 import org.joice.schedule.enums.JobTypeEnum;
+import org.joice.schedule.job.CommonJob;
+import org.joice.schedule.job.NoConcurrentJob;
+import org.joice.schedule.request.AddJobRequest;
+import org.joice.schedule.request.RemoveJobRequest;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.JobListener;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
@@ -82,6 +93,66 @@ public class DefaultScheduleManager implements ScheduleManager {
         LogUtil.info(logger, "所有定时任务查询结果:{0}", jobDetails.size());
 
         return jobDetails;
+    }
+
+    @Override
+    public boolean addJob(AddJobRequest request) {
+
+        LogUtil.info(logger, "收到增加任务请求");
+
+        request.validate();
+
+        JobTypeEnum jobTypeEnum = request.getJobType();
+
+        JobDetail jobDetail = JobBuilder.newJob(getJobTypeClass(jobTypeEnum)).withIdentity(request.getJobName(), request.getJobGroup())
+            .usingJobData(assembleDataMap(request)).withDescription(request.getJobDescription()).build();
+
+        Trigger trigger = TriggerBuilder.newTrigger().withIdentity(request.getTriggerName(), request.getTriggerGroup())
+            .withSchedule(CronScheduleBuilder.cronSchedule(request.getCronExpression())).startNow().build();
+
+        try {
+            scheduler.scheduleJob(jobDetail, trigger);
+            scheduler.start();
+        } catch (SchedulerException e) {
+            throw new RuntimeException("增加任务失败", e);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean removeJob(RemoveJobRequest request) {
+
+        LogUtil.info(logger, "收到删除任务请求");
+
+        request.validate();
+
+        JobKey jobKey = new JobKey(request.getJobName(), request.getJobGroup());
+        try {
+            return scheduler.deleteJob(jobKey);
+        } catch (SchedulerException e) {
+            throw new RuntimeException("删除任务失败", e);
+        }
+    }
+
+    private Class<? extends Job> getJobTypeClass(JobTypeEnum jobTypeEnum) {
+        if (jobTypeEnum == JobTypeEnum.COMMON_JOB) {
+            return CommonJob.class;
+        } else if (jobTypeEnum == JobTypeEnum.NO_CONCURRENT_JOB) {
+            return NoConcurrentJob.class;
+        }
+
+        throw new RuntimeException("无此任务类型:" + jobTypeEnum);
+    }
+
+    private JobDataMap assembleDataMap(AddJobRequest request) {
+        JobDataMap map = new JobDataMap();
+
+        map.put(Constant.JOB_CLASS_NAME, request.getJobClassName());
+        map.put(Constant.JOB_METHOD_NAME, request.getJobMethodName());
+        map.put(Constant.JOB_TYPE, request.getJobType().toString());
+
+        return map;
     }
 
     public Scheduler getScheduler() {
