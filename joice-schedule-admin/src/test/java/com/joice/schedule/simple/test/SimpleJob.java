@@ -1,5 +1,5 @@
 /**
- * 深圳金融电子结算中心
+ * Joice
  * Copyright (c) 1995-2018 All Rights Reserved.
  */
 package com.joice.schedule.simple.test;
