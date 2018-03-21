@@ -59,7 +59,7 @@
 
 	<root level="INFO">
 		<appender-ref ref="stdout" />
-		<appender-ref ref="file.async" />
-		<appender-ref ref="file.error" />
+<!-- 		<appender-ref ref="file.async" />
+		<appender-ref ref="file.error" /> -->
 	</root>
 </configuration>
