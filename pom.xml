@@ -34,6 +34,7 @@
 		<aspectj.version>1.8.9</aspectj.version>
 		<activemq.version>5.13.3</activemq.version>
 		<jsqlparser.version>0.9.5</jsqlparser.version>
+		<hystrix.version>1.5.12</hystrix.version>
 	</properties>
 
 	<modules>
@@ -254,7 +255,22 @@
 			<dependency>
 				<groupId>com.netflix.hystrix</groupId>
 				<artifactId>hystrix-core</artifactId>
-				<version>1.5.12</version>
+				<version>${hystrix.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.netflix.hystrix</groupId>
+				<artifactId>hystrix-metrics-event-stream</artifactId>
+				<version>${hystrix.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.netflix.hystrix</groupId>
+				<artifactId>hystrix-javanica</artifactId>
+				<version>${hystrix.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.netflix.hystrix</groupId>
+				<artifactId>hystrix-servo-metrics-publisher</artifactId>
+				<version>${hystrix.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>

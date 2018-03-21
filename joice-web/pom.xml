@@ -132,6 +132,18 @@
 			<artifactId>hystrix-core</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.netflix.hystrix</groupId>
+			<artifactId>hystrix-metrics-event-stream</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.netflix.hystrix</groupId>
+			<artifactId>hystrix-javanica</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.netflix.hystrix</groupId>
+			<artifactId>hystrix-servo-metrics-publisher</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
