@@ -14,7 +14,7 @@
 		<spring.version>4.3.9.RELEASE</spring.version>
 		<spring-session.version>2.0.0.M2</spring-session.version>
 		<spring-data-redis.version>1.8.0.RELEASE</spring-data-redis.version>
-		<!-- 数据�?-->
+		<!-- 数据�?-->
 		<mysql.version>5.1.39</mysql.version>
 		<sharding-jdbc.version>1.4.1</sharding-jdbc.version>
 		<!-- mybatis版本 -->
@@ -130,7 +130,7 @@
 				<artifactId>jedis</artifactId>
 				<version>${jedis.version}</version>
 			</dependency>
-			<!-- alibaba工具�?-->
+			<!-- alibaba工具�?-->
 			<dependency>
 				<groupId>com.alibaba</groupId>
 				<artifactId>fastjson</artifactId>
@@ -195,7 +195,7 @@
 				<artifactId>activemq-spring</artifactId>
 				<version>${activemq.version}</version>
 			</dependency>
-			<!-- apache工具�?-->
+			<!-- apache工具�?-->
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
@@ -232,7 +232,7 @@
 			<dependency>
 				<groupId>org.apache.rocketmq</groupId>
 				<artifactId>rocketmq-client</artifactId>
-				<version>4.0.0-incubating</version>
+				<version>4.2.0</version>
 			</dependency>
 			<!-- jedis -->
 			<dependency>
@@ -278,8 +278,8 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.2</version>
 					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
+						<source>1.8</source>
+						<target>1.8</target>
 					</configuration>
 				</plugin>
 
