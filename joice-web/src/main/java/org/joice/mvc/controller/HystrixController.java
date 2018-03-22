@@ -4,15 +4,17 @@
  */
 package org.joice.mvc.controller;
 
+import java.util.Random;
+
+import javax.annotation.Resource;
+
 import org.joice.common.util.LogUtil;
+import org.joice.mvc.service.MerchantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 
 /**
  * 
@@ -24,24 +26,18 @@ public class HystrixController {
 
     private static final Logger logger = LoggerFactory.getLogger(HystrixController.class);
 
+    @Resource
+    private MerchantService     merchantService;
+
+    private Random              random = new Random();
+
     @GetMapping("hystrix/metrics")
-    @HystrixCommand(groupKey = "hystrix.metrics", //
-            commandKey = "metrics", //
-            fallbackMethod = "metricsFallback", //
-            commandProperties = { //
-                                  @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "400"), //指定多久超时，单位毫秒。超时进fallback
-                                  @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "10"), //判断熔断的最少请求数，默认是10；只有在一个统计窗口内处理的请求数量达到这个阈值，才会进行熔断与否的判断
-                                  @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "10") }) //判断熔断的阈值，默认值50，表示在一个统计窗口内有50%的请求处理失败，会触发熔断)
     public String metrics(ModelMap map) {
         LogUtil.info(logger, "HystrixController.metrics收到请求");
 
-        throw new RuntimeException("模拟抛出一个异常");
+        merchantService.query(random.nextInt(10));
 
-        //        return "HystrixController.metrics";
-    }
-
-    public void metricsFallback() {
-        LogUtil.info(logger, "metrics处理失败,进入fall back");
+        return "HystrixController.metrics";
     }
 
 }
