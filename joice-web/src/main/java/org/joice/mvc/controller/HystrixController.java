@@ -12,7 +12,6 @@ import org.joice.common.util.LogUtil;
 import org.joice.mvc.service.MerchantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @version $Id: HystrixController.java, v 0.1 2018年3月21日 下午6:07:29 HuHui Exp $
  */
 @RestController
-@EnableAspectJAutoProxy
 public class HystrixController {
 
     private static final Logger logger = LoggerFactory.getLogger(HystrixController.class);
