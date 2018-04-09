@@ -1,0 +1,174 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>My Hello Vue!</title>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+
+<div id="app1">
+	<p>{{message}}</p>
+</div>
+
+<div id="app2">
+	<span v-bind:title="message">鼠标悬停</span>
+</div>
+
+<div id="app3" v-if="seen">
+	<p>现在你看到我了</p>
+</div>
+
+<div id="app4">
+	<ol>
+		<li v-for="todo in todoList">
+			{{todo.text}}
+		</li>
+	</ol>
+</div>
+
+<div id="app5">
+	<p>{{message}}</p>
+	<input v-model="message"></input>
+</div>
+
+<div id="app6">
+	<p>{{rawHtml}}</p>
+	<p><span v-html="rawHtml"></span></p>
+</div>
+
+<div id="app7">
+	<p>原始字符串："{{message}}"</p>
+	<p>翻转字符串："{{reversedMseeage}}"</p>
+</div>
+
+<div id="app8">
+	<span>{{now}}</span>
+</div>
+
+<div id="app9">
+	<span>{{ nowTime() }}</span>
+</div>
+
+<div id="app10">
+	<input v-model="firstName"></input>
+	<input v-model="lastName"></input>
+	<span>{{fullName}}</span>
+</div>
+
+<div id="app11">
+	<span>{{firstName}}</span>
+	<span>{{lastName}}</span>
+	<input v-model="fullName" />
+</div>
+
+<script>
+	var app_1 = new Vue({
+		el: '#app1',
+		data: {
+			message: 'Hello Vue!'
+		}
+	})
+	
+	var app_2 = new Vue({
+		el: '#app2',
+		data:{
+			message:'这是一个提示信息'
+		}
+	})
+	
+	var app_3 = new Vue({
+		el:'#app3',
+		data:{
+			seen:true
+		}
+	})
+	
+	var app_4 = new Vue({
+		el:'#app4',
+		data:{
+			todoList:[
+				{text:'学习Vue'},
+				{text:'学习JavaScript'},
+				{text:'学习CSS'}
+			]
+		}
+	})
+	
+	var app_5 = new Vue({
+		el:'#app5',
+		data:{
+			message:'My Vue Test'
+		}
+	})
+	
+	var app_6 = new Vue({
+		el:'#app6',
+		data:{
+			rawHtml:'<span style="color:red">this should be red</span>'
+		}
+	})
+	
+	var app_7 = new Vue({
+		el:'#app7',
+		data:{
+			message:'Hello'
+		},
+		computed:{
+			reversedMseeage:function(){
+				return this.message.split('').reverse().join('')
+			}
+		}
+	})
+	
+	var app_8 = new Vue({
+		el:'#app8',
+		computed:{//计算属性缓存
+			now:function(){
+				return Date.now();
+			}
+		}
+	})
+	
+	var app_9 = new Vue({
+		el:'#app9',
+		methods: {//结果不会缓存
+		nowTime:function(){
+			return Date.now()
+			}
+		}
+	})
+	
+	var app_10 = new Vue({
+		el:'#app10',
+		data:{
+			firstName:'Hu',
+			lastName:'Hui'
+		},
+		computed:{
+			fullName:function(){
+				return this.firstName + this.lastName
+			}
+		}
+	})
+	
+	var app_11 = new Vue({
+		el:'#app11',
+		data:{
+			fullName:''
+		},
+		
+		computed:{
+			firstName:function(){
+				var names = this.fullName.split(' ')
+				return names[0]
+			},
+			
+			lastName:function(){
+				var names = this.fullName.split(' ')
+				return names[names.length - 1]
+			}
+		}
+	})
+</script>
+</body>
+</html>
