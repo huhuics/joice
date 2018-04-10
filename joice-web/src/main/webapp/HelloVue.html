@@ -61,6 +61,21 @@
 	<input v-model="fullName" />
 </div>
 
+<div id="app12">
+	<div v-if="type === 'A'">
+		A
+	</div>
+	<div v-else-if="type === 'B'">
+		B
+	</div>
+	<div v-else-if="type === 'C'">
+		C
+	</div>
+	<div v-else>
+		not A/B/C
+	</div>
+</div>
+
 <script>
 	var app_1 = new Vue({
 		el: '#app1',
@@ -167,6 +182,13 @@
 				var names = this.fullName.split(' ')
 				return names[names.length - 1]
 			}
+		}
+	})
+	
+	var app_12 = new Vue({
+		el:'#app12',
+		data:{
+			type:'A'
 		}
 	})
 </script>

@@ -17,6 +17,9 @@
 	<context:component-scan base-package="org.joice.mvc" />
 	
 	<aop:aspectj-autoproxy />
+	
+	<!-- 静态资源 -->
+	<mvc:resources location="/static/" mapping="/static/**" />
 
 	<!-- 定义跳转的文件前后缀，视图模式配置 -->
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -33,6 +36,4 @@
 		</mvc:message-converters>
 	</mvc:annotation-driven>
 	
-	<mvc:resources location="/WEB-INF/qr/" mapping="/resources/**"/>
-
 </beans>
