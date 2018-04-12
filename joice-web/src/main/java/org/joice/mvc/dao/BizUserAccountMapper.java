@@ -1,8 +1,8 @@
-package org.joice.common.dao;
+package org.joice.mvc.dao;
 
 import java.util.Map;
 
-import org.joice.common.dao.domain.BizUserAccount;
+import org.joice.mvc.dao.domain.BizUserAccount;
 
 public interface BizUserAccountMapper {
     int deleteByPrimaryKey(Integer id);

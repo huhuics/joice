@@ -1,4 +1,4 @@
-package org.joice.common.dao.domain;
+package org.joice.mvc.dao.domain;
 
 import java.util.Date;
 

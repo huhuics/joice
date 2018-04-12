@@ -7,11 +7,11 @@ package org.joice.mvc.service.impl;
 import javax.annotation.Resource;
 
 import org.apache.rocketmq.client.exception.MQClientException;
-import org.joice.common.dao.BizUserAccountMapper;
-import org.joice.common.dao.domain.BizUserAccount;
 import org.joice.common.dto.PayOrderRequest;
 import org.joice.common.util.AssertUtil;
 import org.joice.common.util.LogUtil;
+import org.joice.mvc.dao.BizUserAccountMapper;
+import org.joice.mvc.dao.domain.BizUserAccount;
 import org.joice.mvc.service.OrderCreationMqProducerService;
 import org.joice.mvc.service.OrderService;
 import org.slf4j.Logger;

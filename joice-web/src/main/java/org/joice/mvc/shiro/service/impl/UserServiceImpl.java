@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
  * @author HuHui
  * @version $Id: UserServiceImpl.java, v 0.1 2018年4月12日 下午5:06:39 HuHui Exp $
  */
-@Service
+@Service("sysUserService")
 public class UserServiceImpl implements UserService {
 
     @Resource

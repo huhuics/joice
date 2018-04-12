@@ -6,8 +6,8 @@ package org.joice.web.test.dao;
 
 import javax.annotation.Resource;
 
-import org.joice.common.dao.BizUserAccountMapper;
-import org.joice.common.dao.domain.BizUserAccount;
+import org.joice.mvc.dao.BizUserAccountMapper;
+import org.joice.mvc.dao.domain.BizUserAccount;
 import org.joice.web.test.base.BaseTest;
 import org.junit.Assert;
 import org.junit.Test;

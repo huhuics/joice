@@ -18,7 +18,8 @@
 
 	<!-- 配置Dao接口所在包名 -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="org.joice.common.dao" />
+		<!-- <property name="basePackage" value="org.joice.common.dao" /> -->
+		<property name="basePackage" value="org.joice.mvc.dao" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
 	
