@@ -93,9 +93,17 @@ public class ShiroIniTest {
 
         Assert.assertTrue(subject.isPermitted("system:user:*"));
         Assert.assertTrue(subject.isPermitted("system:user:select"));
+        Assert.assertFalse(subject.isPermitted("admin:user:select"));
+    }
 
-        //https://blog.csdn.net/swingpyzf/article/details/46342023
-        //http://jinnianshilongnian.iteye.com/blog/2019547
+    @Test
+    public void testPermission3() {
+        AuthenticationToken token = new UsernamePasswordToken("li", "123");
+        login(token);
+
+        Assert.assertTrue(subject.isPermitted("*:*:select"));
+        Assert.assertTrue(subject.isPermitted("system:user:select"));
+        Assert.assertTrue(subject.isPermitted("admin:user:select"));
     }
 
     @After
