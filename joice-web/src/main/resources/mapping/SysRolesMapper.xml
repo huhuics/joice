@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.joice.mvc.dao.SysRolesMapper">
+	<resultMap id="BaseResultMap"
+		type="org.joice.mvc.dao.domain.SysRoles">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="role" jdbcType="VARCHAR" property="role" />
+		<result column="description" jdbcType="VARCHAR"
+			property="description" />
+		<result column="available" jdbcType="BIT" property="available" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, role, description, available
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from sys_roles
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from
+		sys_roles
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert"
+		parameterType="org.joice.mvc.dao.domain.SysRoles">
+		insert into sys_roles (id, role, description,
+		available)
+		values (#{id,jdbcType=BIGINT}, #{role,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR},
+		#{available,jdbcType=BIT})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="org.joice.mvc.dao.domain.SysRoles">
+		insert into sys_roles
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="role != null">
+				role,
+			</if>
+			<if test="description != null">
+				description,
+			</if>
+			<if test="available != null">
+				available,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="role != null">
+				#{role,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				#{description,jdbcType=VARCHAR},
+			</if>
+			<if test="available != null">
+				#{available,jdbcType=BIT},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="org.joice.mvc.dao.domain.SysRoles">
+		update sys_roles
+		<set>
+			<if test="role != null">
+				role = #{role,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				description = #{description,jdbcType=VARCHAR},
+			</if>
+			<if test="available != null">
+				available = #{available,jdbcType=BIT},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="org.joice.mvc.dao.domain.SysRoles">
+		update sys_roles
+		set role = #{role,jdbcType=VARCHAR},
+		description = #{description,jdbcType=VARCHAR},
+		available =
+		#{available,jdbcType=BIT}
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+
+	<insert id="insertWithKey"
+		parameterType="org.joice.mvc.dao.domain.SysRoles"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into sys_roles (id, role,
+		description,
+		available)
+		values (#{id,jdbcType=BIGINT},
+		#{role,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR},
+		#{available,jdbcType=BIT})
+	</insert>
+
+	<select id="selectByUserId" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select r.*
+		FROM sys_users_roles ur, sys_roles r
+		WHERE ur.user_id = #{id,jdbcType=BIGINT}
+		AND r.id = ur.role_id
+	</select>
+</mapper>

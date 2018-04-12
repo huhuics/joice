@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.joice.mvc.dao.SysRolesPermissionsMapper">
+  <resultMap id="BaseResultMap" type="org.joice.mvc.dao.domain.SysRolesPermissions">
+    <id column="role_id" jdbcType="BIGINT" property="roleId" />
+    <id column="permission_id" jdbcType="BIGINT" property="permissionId" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="map">
+    delete from sys_roles_permissions
+    where role_id = #{roleId,jdbcType=BIGINT}
+      and permission_id = #{permissionId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.joice.mvc.dao.domain.SysRolesPermissions">
+    insert into sys_roles_permissions (role_id, permission_id)
+    values (#{roleId,jdbcType=BIGINT}, #{permissionId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="org.joice.mvc.dao.domain.SysRolesPermissions">
+    insert into sys_roles_permissions
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="permissionId != null">
+        permission_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        #{roleId,jdbcType=BIGINT},
+      </if>
+      <if test="permissionId != null">
+        #{permissionId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+</mapper>

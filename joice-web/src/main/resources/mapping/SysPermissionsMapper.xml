@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.joice.mvc.dao.SysPermissionsMapper">
+	<resultMap id="BaseResultMap"
+		type="org.joice.mvc.dao.domain.SysPermissions">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="permission" jdbcType="VARCHAR"
+			property="permission" />
+		<result column="description" jdbcType="VARCHAR"
+			property="description" />
+		<result column="available" jdbcType="BIT" property="available" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, permission, description, available
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from sys_permissions
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from sys_permissions
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert"
+		parameterType="org.joice.mvc.dao.domain.SysPermissions">
+		insert into sys_permissions (id, permission, description,
+		available)
+		values (#{id,jdbcType=BIGINT}, #{permission,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR},
+		#{available,jdbcType=BIT})
+	</insert>
+	<insert id="insertSelective"
+		parameterType="org.joice.mvc.dao.domain.SysPermissions">
+		insert into sys_permissions
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="permission != null">
+				permission,
+			</if>
+			<if test="description != null">
+				description,
+			</if>
+			<if test="available != null">
+				available,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="permission != null">
+				#{permission,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				#{description,jdbcType=VARCHAR},
+			</if>
+			<if test="available != null">
+				#{available,jdbcType=BIT},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="org.joice.mvc.dao.domain.SysPermissions">
+		update sys_permissions
+		<set>
+			<if test="permission != null">
+				permission = #{permission,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				description = #{description,jdbcType=VARCHAR},
+			</if>
+			<if test="available != null">
+				available = #{available,jdbcType=BIT},
+			</if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="org.joice.mvc.dao.domain.SysPermissions">
+		update sys_permissions
+		set permission = #{permission,jdbcType=VARCHAR},
+		description = #{description,jdbcType=VARCHAR},
+		available = #{available,jdbcType=BIT}
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+
+	<insert id="insertWithKey"
+		parameterType="org.joice.mvc.dao.domain.SysPermissions"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into sys_permissions (id, permission, description,
+		available)
+		values (#{id,jdbcType=BIGINT}, #{permission,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR},
+		#{available,jdbcType=BIT})
+	</insert>
+
+	<select id="selectByUserId" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		SELECT p.* FROM sys_users_roles ur,
+		sys_roles_permissions rp, sys_permissions p
+		WHERE ur.user_id = #{id,jdbcType=BIGINT}
+		AND rp.role_id = ur.role_id
+		AND p.id = rp.permission_id;
+	</select>
+
+</mapper>
