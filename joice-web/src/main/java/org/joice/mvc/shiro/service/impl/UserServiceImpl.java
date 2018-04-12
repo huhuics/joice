@@ -15,8 +15,6 @@ import org.joice.mvc.dao.SysPermissionsMapper;
 import org.joice.mvc.dao.SysRolesMapper;
 import org.joice.mvc.dao.SysUsersMapper;
 import org.joice.mvc.dao.SysUsersRolesMapper;
-import org.joice.mvc.dao.domain.SysPermissions;
-import org.joice.mvc.dao.domain.SysRoles;
 import org.joice.mvc.dao.domain.SysUsers;
 import org.joice.mvc.dao.domain.SysUsersRoles;
 import org.joice.mvc.shiro.service.UserService;
@@ -90,15 +88,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Set<SysRoles> findRoles(Long userId) {
-        List<SysRoles> roles = rolesMapper.selectByUserId(userId);
-        return new HashSet<SysRoles>(roles);
+    public Set<String> findRoles(Long userId) {
+        List<String> roles = rolesMapper.selectByUserId(userId);
+        return new HashSet<String>(roles);
     }
 
     @Override
-    public Set<SysPermissions> findPermissions(Long userId) {
-        List<SysPermissions> permissions = permissionsMapper.selectByUserId(userId);
-        return new HashSet<SysPermissions>(permissions);
+    public Set<String> findPermissions(Long userId) {
+        List<String> permissions = permissionsMapper.selectByUserId(userId);
+        return new HashSet<String>(permissions);
     }
 
 }

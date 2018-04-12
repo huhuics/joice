@@ -19,5 +19,5 @@ public interface SysRolesMapper {
 
     Long insertWithKey(SysRoles record);
 
-    List<SysRoles> selectByUserId(Long userId);
+    List<String> selectByUserId(Long userId);
 }

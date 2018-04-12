@@ -100,8 +100,8 @@
 	</insert>
 
 	<select id="selectByUserId" parameterType="java.lang.Long"
-		resultMap="BaseResultMap">
-		SELECT p.* FROM sys_users_roles ur,
+		resultType="java.lang.String">
+		SELECT p.permission FROM sys_users_roles ur,
 		sys_roles_permissions rp, sys_permissions p
 		WHERE ur.user_id = #{id,jdbcType=BIGINT}
 		AND rp.role_id = ur.role_id

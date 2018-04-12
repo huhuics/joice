@@ -83,22 +83,22 @@ public class ShiroUserDataTest extends BaseTest {
 
     @Test
     public void testFindRoles() {
-        Set<SysRoles> roles1 = userService.findRoles(1L);
+        Set<String> roles1 = userService.findRoles(1L);
         Assert.assertTrue(roles1.size() == 1);
 
-        Set<SysRoles> roles2 = userService.findRoles(4L);
+        Set<String> roles2 = userService.findRoles(4L);
         Assert.assertTrue(roles2.size() == 2);
     }
 
     @Test
     public void testFindPermissions() {
-        Set<SysPermissions> permissions1 = userService.findPermissions(1L);
+        Set<String> permissions1 = userService.findPermissions(1L);
         Assert.assertTrue(permissions1.size() == 2);
 
-        Set<SysPermissions> permissions2 = userService.findPermissions(2L);
+        Set<String> permissions2 = userService.findPermissions(2L);
         Assert.assertTrue(permissions2.size() == 3);
 
-        Set<SysPermissions> permissions3 = userService.findPermissions(4L);
+        Set<String> permissions3 = userService.findPermissions(4L);
         Assert.assertTrue(permissions3.size() == 3);
     }
 

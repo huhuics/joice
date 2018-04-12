@@ -22,5 +22,5 @@ public interface SysPermissionsMapper {
      */
     Long insertWithKey(SysPermissions record);
 
-    List<SysPermissions> selectByUserId(Long userId);
+    List<String> selectByUserId(Long userId);
 }

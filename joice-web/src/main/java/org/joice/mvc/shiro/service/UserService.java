@@ -6,8 +6,6 @@ package org.joice.mvc.shiro.service;
 
 import java.util.Set;
 
-import org.joice.mvc.dao.domain.SysPermissions;
-import org.joice.mvc.dao.domain.SysRoles;
 import org.joice.mvc.dao.domain.SysUsers;
 
 /**
@@ -45,11 +43,11 @@ public interface UserService {
     /**
      * 根据用户Id查找其角色
      */
-    Set<SysRoles> findRoles(Long userId);
+    Set<String> findRoles(Long userId);
 
     /**
      * 根据用户Id查找其权限
      */
-    Set<SysPermissions> findPermissions(Long userId);
+    Set<String> findPermissions(Long userId);
 
 }

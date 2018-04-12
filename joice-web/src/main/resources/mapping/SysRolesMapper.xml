@@ -103,8 +103,8 @@
 	</insert>
 
 	<select id="selectByUserId" parameterType="java.lang.Long"
-		resultMap="BaseResultMap">
-		select r.*
+		resultType="java.lang.String">
+		select r.role
 		FROM sys_users_roles ur, sys_roles r
 		WHERE ur.user_id = #{id,jdbcType=BIGINT}
 		AND r.id = ur.role_id
