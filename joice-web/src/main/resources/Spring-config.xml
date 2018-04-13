@@ -24,6 +24,8 @@
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="springContextUtil" class="org.joice.mvc.util.SpringContextUtil" />
 
 	<aop:aspectj-autoproxy />
 
@@ -32,7 +34,7 @@
 
 	<!-- 扫描注解 -->
 	<context:component-scan base-package="org.joice" />
-
+	
 	<context:annotation-config />
 
 	<!-- 引入Spring其它配置文件 -->

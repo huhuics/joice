@@ -4,8 +4,6 @@
  */
 package org.joice.mvc.shiro.core;
 
-import javax.annotation.Resource;
-
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -19,18 +17,16 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.joice.mvc.dao.domain.SysUsers;
 import org.joice.mvc.shiro.service.UserService;
-import org.springframework.stereotype.Service;
+import org.joice.mvc.util.SpringContextUtil;
 
 /**
  * 
  * @author HuHui
  * @version $Id: UserRealm.java, v 0.1 2018年4月12日 下午9:33:03 HuHui Exp $
  */
-@Service
 public class UserRealm extends AuthorizingRealm {
 
-    @Resource(name = "sysUserService")
-    private UserService userService;
+    private UserService userService = (UserService) SpringContextUtil.getContext().getBean("sysUserService");
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
@@ -45,7 +41,7 @@ public class UserRealm extends AuthorizingRealm {
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        long userId = (long) token.getPrincipal();
+        long userId = Long.parseLong((String) token.getPrincipal());
 
         SysUsers user = userService.findById(userId);
 
@@ -63,7 +59,6 @@ public class UserRealm extends AuthorizingRealm {
             getName());
 
         return authenInfo;
-        //https://blog.csdn.net/swingpyzf/article/details/46342023
     }
 
 }

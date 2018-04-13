@@ -48,7 +48,7 @@ public class ShiroIniTest {
             subject.login(token);
         } catch (AuthenticationException e) {
             //5.身份验证失败
-            LogUtil.info(logger, "身份验证失败");
+            LogUtil.error(e, logger, "身份验证失败");
         }
 
         Assert.assertEquals(true, subject.isAuthenticated());
