@@ -1,15 +1,21 @@
 package org.joice.mvc.dao.domain;
 
-public class SysUsers {
-    private Long id;
+import org.joice.common.base.BaseDomain;
 
-    private String username;
+public class SysUsers extends BaseDomain {
 
-    private String password;
+    /**  */
+    private static final long serialVersionUID = 7174585560905356628L;
 
-    private String salt;
+    private Long              id;
 
-    private Boolean locked;
+    private String            username;
+
+    private String            password;
+
+    private String            salt;
+
+    private Boolean           locked;
 
     public Long getId() {
         return id;

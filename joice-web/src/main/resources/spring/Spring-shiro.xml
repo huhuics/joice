@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<!-- 对应web.xml中配置的shiroFilter -->
+	<bean id="shiroFilter"
+		class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<!-- shiro核心安全接口,该属性必须配置 -->
+		<property name="securityManager" ref="securityManager" />
+		<!-- 登录链接,非必须,默认会自动寻找web工程根目录下的/login.jsp -->
+		<property name="loginUrl" value="/login.html" />
+		<!-- 登录成功后跳转的链接(一般用不到,因为通常登录成功后处理的逻辑在Controller中) -->
+		<!-- <property name="successUrl" value="/" /> -->
+		<!-- 用户方位未对其授权的资源时所显示的链接 -->
+		<property name="unauthorizedUrl" value="/error/unauthorized"></property>
+
+		<property name="filterChainDefinitions">
+			<value>
+				/admin/**=authc
+			</value>
+		</property>
+	</bean>
+
+	<bean id="lifecycleBeanPostProcessor"
+		class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+	<!-- 密码配置对象 -->
+	<bean id="credentialsMatcher"
+		class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+		<property name="hashAlgorithmName" value="md5" />
+		<property name="hashIterations" value="2" />
+	</bean>
+
+	<!-- 缓存管理 -->
+	<bean id="shiroCacheManager"
+		class="org.apache.shiro.cache.MemoryConstrainedCacheManager" />
+
+	<bean id="userRealm" class="org.joice.mvc.shiro.core.UserRealm">
+		<property name="userService" ref="sysUserService" />
+		<property name="credentialsMatcher" ref="credentialsMatcher" />
+		<property name="cachingEnabled" value="true" />
+		<property name="authenticationCachingEnabled" value="true" />
+		<property name="authenticationCacheName"
+			value="authenticationCache" />
+		<property name="authorizationCachingEnabled" value="true" />
+		<property name="authorizationCacheName"
+			value="authorizationCache" />
+	</bean>
+
+	<!-- 配置Shiro SecurityManager -->
+	<bean id="securityManager"
+		class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="userRealm" />
+		<property name="cacheManager" ref="shiroCacheManager" />
+	</bean>
+
+	<!-- shiro的注解配置一定要放在spring-mvc中 -->
+
+</beans>

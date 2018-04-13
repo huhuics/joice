@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
@@ -14,26 +15,40 @@
                         http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
 
 	<!-- 自动扫描该包，Spring MVC会认为该包中使用了@Controller注解的类是控制器 -->
-	<context:component-scan base-package="org.joice.mvc" />
-	
+	<context:component-scan
+		base-package="org.joice.mvc" />
+
 	<aop:aspectj-autoproxy />
-	
+
 	<!-- 静态资源 -->
 	<mvc:resources location="/static/" mapping="/static/**" />
 
 	<!-- 定义跳转的文件前后缀，视图模式配置 -->
-	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/" />
 		<property name="suffix" value=".jsp" />
 	</bean>
 
 	<!-- Controller返回json字符串编码 -->
 	<mvc:annotation-driven>
-		<mvc:message-converters register-defaults="true">
-			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+		<mvc:message-converters
+			register-defaults="true">
+			<bean
+				class="org.springframework.http.converter.StringHttpMessageConverter">
 				<constructor-arg value="UTF-8" />
 			</bean>
 		</mvc:message-converters>
 	</mvc:annotation-driven>
-	
+
+	<!-- 开启shiro注解 -->
+	<bean
+		class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+		depends-on="lifecycleBeanPostProcessor">
+		<property name="proxyTargetClass" value="true" />
+	</bean>
+
+	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager" />
+	</bean>
 </beans>

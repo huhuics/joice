@@ -1,13 +1,18 @@
 package org.joice.mvc.dao.domain;
 
-public class SysPermissions {
-    private Long    id;
+import org.joice.common.base.BaseDomain;
 
-    private String  permission;
+public class SysPermissions extends BaseDomain {
+    /**  */
+    private static final long serialVersionUID = 7024803579410473606L;
 
-    private String  description;
+    private Long              id;
 
-    private Boolean available;
+    private String            permission;
+
+    private String            description;
+
+    private Boolean           available;
 
     public Long getId() {
         return id;

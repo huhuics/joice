@@ -1,9 +1,14 @@
 package org.joice.mvc.dao.domain;
 
-public class SysUsersRoles {
-    private Long userId;
+import org.joice.common.base.BaseDomain;
 
-    private Long roleId;
+public class SysUsersRoles extends BaseDomain {
+    /**  */
+    private static final long serialVersionUID = -4523168384095643154L;
+
+    private Long              userId;
+
+    private Long              roleId;
 
     public Long getUserId() {
         return userId;

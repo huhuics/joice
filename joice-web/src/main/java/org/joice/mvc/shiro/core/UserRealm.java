@@ -17,7 +17,6 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.joice.mvc.dao.domain.SysUsers;
 import org.joice.mvc.shiro.service.UserService;
-import org.joice.mvc.util.SpringContextUtil;
 
 /**
  * 
@@ -26,7 +25,9 @@ import org.joice.mvc.util.SpringContextUtil;
  */
 public class UserRealm extends AuthorizingRealm {
 
-    private UserService userService = (UserService) SpringContextUtil.getContext().getBean("sysUserService");
+    //    private UserService userService = (UserService) SpringContextUtil.getContext().getBean("sysUserService");
+
+    private UserService userService;
 
     /**
      * 获取用户的角色、权限数据 
@@ -65,6 +66,38 @@ public class UserRealm extends AuthorizingRealm {
             getName());
 
         return authenInfo;
+    }
+
+    @Override
+    protected void clearCachedAuthorizationInfo(PrincipalCollection principals) {
+        super.clearCachedAuthorizationInfo(principals);
+    }
+
+    @Override
+    protected void clearCachedAuthenticationInfo(PrincipalCollection principals) {
+        super.clearCachedAuthenticationInfo(principals);
+    }
+
+    @Override
+    protected void clearCache(PrincipalCollection principals) {
+        super.clearCache(principals);
+    }
+
+    public void clearAllCachedAuthoInfo() {
+        getAuthorizationCache().clear();
+    }
+
+    public void clearAllCachedAuthenInfo() {
+        getAuthenticationCache().clear();
+    }
+
+    public void clearAllCache() {
+        clearAllCachedAuthoInfo();
+        clearAllCachedAuthenInfo();
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
 }
