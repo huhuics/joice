@@ -37,10 +37,10 @@ public class ShiroUserDataTest extends BaseTest {
     @Test
     public void testInsertUsers() {
         SysUsers user = new SysUsers();
-        user.setUsername("马六");
+        user.setUsername("张七");
         user.setPassword("123");
         user.setSalt("123");
-        user.setLocked(false);
+        user.setLocked(true);
 
         SysUsers createUser = userService.createUser(user);
         Assert.assertNotNull(createUser.getId());

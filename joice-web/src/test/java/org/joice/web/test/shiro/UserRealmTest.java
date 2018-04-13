@@ -4,6 +4,9 @@
  */
 package org.joice.web.test.shiro;
 
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -18,9 +21,47 @@ public class UserRealmTest extends BaseShiroTest {
 
     @Test
     public void testLoginSuccess() {
-        login(INI_FILE, "1", "1223");
+        login(INI_FILE, "1", "123");
+        Assert.assertTrue(getSubject().isAuthenticated());
+    }
 
-        Assert.assertFalse(getSubject().isAuthenticated());
+    @Test(expected = UnknownAccountException.class)
+    public void testLoginFailedWithUnknownUsername() {
+        login(INI_FILE, "11", "1232");
+    }
+
+    @Test(expected = IncorrectCredentialsException.class)
+    public void testLoginFailedWithIncorrectCredentials() {
+        login(INI_FILE, "1", "12332");
+    }
+
+    @Test(expected = LockedAccountException.class)
+    public void testLoginFailedWithLockedAccount() {
+        login(INI_FILE, "5", "123");
+    }
+
+    @Test
+    public void testHasRole() {
+        login(INI_FILE, "1", "123");
+        Assert.assertTrue(getSubject().hasRole("programmer"));
+    }
+
+    @Test
+    public void testHasNoRole() {
+        login(INI_FILE, "1", "123");
+        Assert.assertFalse(getSubject().hasRole("PM"));
+    }
+
+    @Test
+    public void testHasPermission() {
+        login(INI_FILE, "1", "123");
+        Assert.assertTrue(getSubject().isPermitted("select"));
+    }
+
+    @Test
+    public void testHasNoPermission() {
+        login(INI_FILE, "1", "123");
+        Assert.assertFalse(getSubject().isPermitted("delete"));
     }
 
 }

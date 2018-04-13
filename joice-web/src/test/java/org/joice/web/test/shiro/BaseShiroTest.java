@@ -5,7 +5,6 @@
 package org.joice.web.test.shiro;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.config.IniSecurityManagerFactory;
@@ -13,7 +12,6 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
 import org.apache.shiro.util.ThreadContext;
-import org.joice.common.util.LogUtil;
 import org.joice.web.test.base.BaseTest;
 import org.junit.After;
 
@@ -38,13 +36,8 @@ public class BaseShiroTest extends BaseTest {
         //4.创建token
         AuthenticationToken token = new UsernamePasswordToken(userId, password);
 
-        try {
-            //5.登录，即身份验证
-            subject.login(token);
-        } catch (AuthenticationException e) {
-            LogUtil.error(e, logger, "登录失败");
-        }
-
+        //5.登录，即身份验证
+        subject.login(token);
     }
 
     protected Subject getSubject() {

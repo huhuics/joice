@@ -28,6 +28,9 @@ public class UserRealm extends AuthorizingRealm {
 
     private UserService userService = (UserService) SpringContextUtil.getContext().getBean("sysUserService");
 
+    /**
+     * 获取用户的角色、权限数据 
+     */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         long userId = (long) principals.getPrimaryPrincipal();
@@ -39,6 +42,9 @@ public class UserRealm extends AuthorizingRealm {
         return authorInfo;
     }
 
+    /**
+     * 获取用户数据
+     */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         long userId = Long.parseLong((String) token.getPrincipal());
