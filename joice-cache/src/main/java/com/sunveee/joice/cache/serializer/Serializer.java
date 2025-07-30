@@ -1,6 +1,6 @@
 
 /**
- * 深圳金融电子结算中心
+ *
  * Copyright (c) 1995-2017 All Rights Reserved.
  */
 package com.sunveee.joice.cache.serializer;
